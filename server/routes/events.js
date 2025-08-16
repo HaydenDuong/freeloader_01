@@ -34,9 +34,10 @@ router.post('/', authenticateToken, requireRole('organizer'), (req, res) => {
             title,
             description,
             location,
-            dateTime,
+            date_time: dateTime,
             goodsProvided,
-            organizerId: req.user.id
+            organizer_id: req.user.id,
+            created_at: new Date().toISOString()
           }
         });
       }
@@ -153,9 +154,10 @@ router.put('/:id', authenticateToken, requireRole('organizer'), (req, res) => {
                 title,
                 description,
                 location,
-                dateTime,
+                date_time: dateTime,
                 goodsProvided,
-                organizerId: req.user.id
+                organizer_id: req.user.id,
+                created_at: new Date().toISOString()
               }
             });
           }

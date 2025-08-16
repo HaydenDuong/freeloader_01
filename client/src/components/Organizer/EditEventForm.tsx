@@ -9,11 +9,32 @@ interface EditEventFormProps {
 }
 
 const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, onCancel }) => {
-  const [title, setTitle] = useState(event.title);
-  const [description, setDescription] = useState(event.description);
-  const [location, setLocation] = useState(event.location);
-  const [dateTime, setDateTime] = useState(event.date_time.slice(0, 16)); // Format for datetime-local input
-  const [goodsProvided, setGoodsProvided] = useState<string[]>([...event.goodsProvided]);
+  // Helper function to format date for datetime-local input
+  const formatDateTimeForInput = (dateString: string) => {
+    if (!dateString) return '';
+    try {
+      const date = new Date(dateString);
+      if (isNaN(date.getTime())) return '';
+      
+      // Format as YYYY-MM-DDTHH:MM for datetime-local input
+      const year = date.getFullYear();
+      const month = String(date.getMonth() + 1).padStart(2, '0');
+      const day = String(date.getDate()).padStart(2, '0');
+      const hours = String(date.getHours()).padStart(2, '0');
+      const minutes = String(date.getMinutes()).padStart(2, '0');
+      
+      return `${year}-${month}-${day}T${hours}:${minutes}`;
+    } catch (error) {
+      console.error('Error formatting date:', error);
+      return '';
+    }
+  };
+
+  const [title, setTitle] = useState(event.title || '');
+  const [description, setDescription] = useState(event.description || '');
+  const [location, setLocation] = useState(event.location || '');
+  const [dateTime, setDateTime] = useState(formatDateTimeForInput(event.date_time));
+  const [goodsProvided, setGoodsProvided] = useState<string[]>(event.goodsProvided ? [...event.goodsProvided] : ['']);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -56,7 +77,13 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
 
       onEventUpdated(response.event);
     } catch (err: any) {
+      if (err.response?.status === 401) {
+        setError('Your session has expired. Please login again.');
+        // The interceptor will handle the redirect
+        return;
+      }
       setError(err.response?.data?.message || 'Failed to update event');
+      console.error('Error updating event:', err);
     } finally {
       setLoading(false);
     }

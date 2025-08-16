@@ -26,8 +26,13 @@ const OrganizerDashboard: React.FC = () => {
     try {
       const response = await eventsAPI.getMyEvents();
       setEvents(response.events);
+      setError(''); // Clear any previous errors
     } catch (err: any) {
-      setError('Failed to fetch events');
+      if (err.response?.status === 401) {
+        // Token expired, user will be redirected by interceptor
+        return;
+      }
+      setError(err.response?.data?.message || 'Failed to fetch events');
       console.error('Error fetching events:', err);
     } finally {
       setLoading(false);
@@ -63,8 +68,14 @@ const OrganizerDashboard: React.FC = () => {
       await eventsAPI.deleteEvent(deletingEvent.id);
       setEvents(events.filter(event => event.id !== deletingEvent.id));
       setDeletingEvent(null);
+      setError(''); // Clear any previous errors
     } catch (err: any) {
+      if (err.response?.status === 401) {
+        // Token expired, user will be redirected by interceptor
+        return;
+      }
       setError(err.response?.data?.message || 'Failed to delete event');
+      console.error('Error deleting event:', err);
     } finally {
       setDeleteLoading(false);
     }

@@ -1,5 +1,6 @@
 import React, { createContext, useContext, useState, useEffect, ReactNode } from 'react';
 import { User } from '../types';
+import { tokenUtils } from '../utils/api';
 
 interface AuthContextType {
   user: User | null;
@@ -34,9 +35,23 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     
     if (storedToken && storedUser) {
       try {
+        // Check if token is expired
+        if (tokenUtils.isTokenExpiringSoon(storedToken, 0)) {
+          console.log('Stored token is expired, clearing auth data');
+          localStorage.removeItem('token');
+          localStorage.removeItem('user');
+          return;
+        }
+        
         const parsedUser = JSON.parse(storedUser);
         setToken(storedToken);
         setUser(parsedUser);
+        
+        // Log when token will expire
+        const expiration = tokenUtils.getTokenExpiration(storedToken);
+        if (expiration) {
+          console.log('Token expires at:', expiration);
+        }
       } catch (error) {
         console.error('Error parsing stored user data:', error);
         localStorage.removeItem('token');

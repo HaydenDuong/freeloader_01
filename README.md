@@ -46,7 +46,7 @@ A platform connecting event organizers with students, offering free goods and se
 1. **Clone the repository**
    ```bash
    git clone <repository-url>
-   cd freeloader-mvp
+   cd freeloader_01
    ```
 
 2. **Install dependencies**

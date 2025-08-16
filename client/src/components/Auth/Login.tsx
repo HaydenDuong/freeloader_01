@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
+import DotBackground from './DotBackground';
 
 const Login: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -36,6 +37,7 @@ const Login: React.FC = () => {
 
   return (
     <div className="auth-container">
+      <DotBackground />
       <div className="auth-card">
         <h2>FreeLoader</h2>
         <form onSubmit={handleSubmit} className="auth-form">

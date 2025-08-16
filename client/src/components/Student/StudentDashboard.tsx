@@ -12,10 +12,25 @@ const StudentDashboard: React.FC = () => {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [showCalendar, setShowCalendar] = useState(false);
+  const [rsvpEvents, setRsvpEvents] = useState<Set<number>>(new Set());
 
   useEffect(() => {
     fetchAllEvents();
+    loadRsvpData();
   }, []);
+
+  // Load RSVP data from localStorage
+  const loadRsvpData = () => {
+    const savedRsvps = localStorage.getItem('student_rsvps');
+    if (savedRsvps) {
+      try {
+        const rsvpArray = JSON.parse(savedRsvps);
+        setRsvpEvents(new Set(rsvpArray));
+      } catch (error) {
+        console.error('Error loading RSVPs:', error);
+      }
+    }
+  };
 
   const fetchAllEvents = async () => {
     try {
@@ -35,6 +50,20 @@ const StudentDashboard: React.FC = () => {
 
   const handleCalendarToggle = () => {
     setShowCalendar(!showCalendar);
+  };
+
+  // Handle RSVP changes from child components
+  const handleRsvpToggle = (eventId: number) => {
+    const newRsvpEvents = new Set(rsvpEvents);
+    if (newRsvpEvents.has(eventId)) {
+      newRsvpEvents.delete(eventId);
+    } else {
+      newRsvpEvents.add(eventId);
+    }
+    setRsvpEvents(newRsvpEvents);
+    
+    // Save to localStorage
+    localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
   };
 
   // Filter events by upcoming vs past
@@ -90,6 +119,7 @@ const StudentDashboard: React.FC = () => {
               {showCalendar && (
                 <EventCalendar 
                   events={events} 
+                  rsvpEvents={rsvpEvents}
                   onEventClick={(event) => console.log('Event clicked:', event)}
                 />
               )}
@@ -105,14 +135,23 @@ const StudentDashboard: React.FC = () => {
                       📅 {showCalendar ? 'Hide Calendar' : 'Calendar View'}
                     </button>
                   </div>
-                  <StudentEventList events={upcomingEvents} />
+                  <StudentEventList 
+                    events={upcomingEvents} 
+                    rsvpEvents={rsvpEvents}
+                    onRsvpToggle={handleRsvpToggle}
+                  />
                 </div>
               )}
 
               {pastEvents.length > 0 && (
                 <div className="events-section">
                   <h2>📅 Past Events ({pastEvents.length})</h2>
-                  <StudentEventList events={pastEvents} isPast={true} />
+                  <StudentEventList 
+                    events={pastEvents} 
+                    rsvpEvents={rsvpEvents}
+                    onRsvpToggle={handleRsvpToggle}
+                    isPast={true} 
+                  />
                 </div>
               )}
             </div>

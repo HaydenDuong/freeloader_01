@@ -1,31 +1,15 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import { Event } from '../../types';
 
 interface EventCalendarProps {
   events: Event[];
+  rsvpEvents: Set<number>;
   onEventClick?: (event: Event) => void;
 }
 
-// Local storage key for RSVPs
-const RSVP_STORAGE_KEY = 'student_rsvps';
-
-const EventCalendar: React.FC<EventCalendarProps> = ({ events, onEventClick }) => {
+const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEventClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
-  const [rsvpEvents, setRsvpEvents] = useState<Set<number>>(new Set());
-
-  // Load RSVPs from localStorage
-  useEffect(() => {
-    const savedRsvps = localStorage.getItem(RSVP_STORAGE_KEY);
-    if (savedRsvps) {
-      try {
-        const rsvpArray = JSON.parse(savedRsvps);
-        setRsvpEvents(new Set(rsvpArray));
-      } catch (error) {
-        console.error('Error loading RSVPs:', error);
-      }
-    }
-  }, []);
 
   // Filter events to show only RSVP'd events
   const rsvpedEvents = events.filter(event => rsvpEvents.has(event.id));

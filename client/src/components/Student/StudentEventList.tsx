@@ -1,44 +1,19 @@
-import React, { useState, useEffect } from 'react';
+import React from 'react';
 import { Event } from '../../types';
 
 interface StudentEventListProps {
   events: Event[];
+  rsvpEvents: Set<number>;
+  onRsvpToggle: (eventId: number) => void;
   isPast?: boolean;
 }
 
-// Local storage key for RSVPs
-const RSVP_STORAGE_KEY = 'student_rsvps';
-
-const StudentEventList: React.FC<StudentEventListProps> = ({ events, isPast = false }) => {
-  const [rsvpEvents, setRsvpEvents] = useState<Set<number>>(new Set());
-
-  // Load RSVPs from localStorage on component mount
-  useEffect(() => {
-    const savedRsvps = localStorage.getItem(RSVP_STORAGE_KEY);
-    if (savedRsvps) {
-      try {
-        const rsvpArray = JSON.parse(savedRsvps);
-        setRsvpEvents(new Set(rsvpArray));
-      } catch (error) {
-        console.error('Error loading RSVPs:', error);
-      }
-    }
-  }, []);
-
-  // Save RSVPs to localStorage whenever they change
-  useEffect(() => {
-    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(Array.from(rsvpEvents)));
-  }, [rsvpEvents]);
-
-  const handleRsvpToggle = (eventId: number) => {
-    const newRsvpEvents = new Set(rsvpEvents);
-    if (newRsvpEvents.has(eventId)) {
-      newRsvpEvents.delete(eventId);
-    } else {
-      newRsvpEvents.add(eventId);
-    }
-    setRsvpEvents(newRsvpEvents);
-  };
+const StudentEventList: React.FC<StudentEventListProps> = ({ 
+  events, 
+  rsvpEvents, 
+  onRsvpToggle, 
+  isPast = false 
+}) => {
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -115,7 +90,7 @@ const StudentEventList: React.FC<StudentEventListProps> = ({ events, isPast = fa
                 <div className="event-actions">
                   <button
                     className={`rsvp-button ${isRsvped ? 'rsvped' : ''}`}
-                    onClick={() => handleRsvpToggle(event.id)}
+                    onClick={() => onRsvpToggle(event.id)}
                   >
                     {isRsvped ? '✓ Going!' : '+ I\'m Interested'}
                   </button>

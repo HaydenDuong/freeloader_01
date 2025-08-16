@@ -117,4 +117,15 @@ export const eventsAPI = {
     api.get('/events/my-events').then(res => res.data),
 };
 
+export const userAPI = {
+  getInterests: async () => {
+    const response = await api.get('/user/interests');
+    return response.data;
+  },
+  updateInterests: async (interests: string[]) => {
+    const response = await api.put('/user/interests', { interests });
+    return response.data;
+  },
+};
+
 export default api;

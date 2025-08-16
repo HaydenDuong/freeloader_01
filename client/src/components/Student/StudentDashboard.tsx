@@ -79,6 +79,9 @@ const StudentDashboard: React.FC = () => {
           <h1>Student Dashboard</h1>
           <div className="header-actions">
             <span className="user-email">Welcome, {user?.email}</span>
+            <Link to="/student/edit-profile" className="edit-profile-button">
+              Edit Profile
+            </Link>
             <button onClick={handleLogout} className="logout-button">
               Logout
             </button>

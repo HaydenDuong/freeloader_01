@@ -9,6 +9,7 @@ import Register from './components/Auth/Register';
 import OrganizerDashboard from './components/Organizer/OrganizerDashboard';
 import StudentDashboard from './components/Student/StudentDashboard';
 import SavedEvents from './components/Student/SavedEvents';
+import EditProfile from './components/Student/EditProfile';
 import './App.css';
 
 function App() {
@@ -65,6 +66,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="student">
                   <SavedEvents />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/student/edit-profile" 
+              element={
+                <ProtectedRoute requiredRole="student">
+                  <EditProfile />
                 </ProtectedRoute>
               } 
             />

@@ -5,6 +5,7 @@ require('dotenv').config();
 
 const authRoutes = require('./routes/auth');
 const eventRoutes = require('./routes/events');
+const userRoutes = require('./routes/user');
 const { initializeDatabase } = require('./database/db');
 
 const app = express();
@@ -20,6 +21,7 @@ initializeDatabase();
 // Routes
 app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
+app.use('/api/user', userRoutes);
 
 // Serve static files from React build in production
 if (process.env.NODE_ENV === 'production') {

@@ -29,6 +29,15 @@ const initializeDatabase = () => {
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (organizer_id) REFERENCES users (id)
     )`);
+
+    // Create student_interests table
+    db.run(`CREATE TABLE IF NOT EXISTS student_interests (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      tag TEXT NOT NULL,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+      UNIQUE(user_id, tag)
+    )`);
   });
 };
 

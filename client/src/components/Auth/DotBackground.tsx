@@ -20,8 +20,8 @@ const DotBackground: React.FC = () => {
       dots.push({
         x: Math.random() * width,
         y: Math.random() * height,
-        vx: (Math.random() - 0.5) * 0.5,
-        vy: (Math.random() - 0.5) * 0.5,
+        vx: (Math.random() - 0.5) * 0.02,
+        vy: (Math.random() - 0.5) * 0.02,
         size: Math.random() * 2 + 1,
       });
     }
@@ -34,10 +34,16 @@ const DotBackground: React.FC = () => {
         let dy = dot.y - mouse.y;
         let dist = Math.sqrt(dx * dx + dy * dy);
 
-        if (dist < 200) {
-          dot.vx -= dx / dist * 0.01;
-          dot.vy -= dy / dist * 0.01;
+        if (dist < 100) { // Reduced interaction distance
+          dot.vx -= dx / dist * 0.005; // Reduced pull strength
+          dot.vy -= dy / dist * 0.005;
         }
+
+        dot.vx *= 0.99;
+        dot.vy *= 0.99;
+
+        dot.vx += (Math.random() - 0.5) * 0.002;
+        dot.vy += (Math.random() - 0.5) * 0.002;
 
         dot.x += dot.vx;
         dot.y += dot.vy;

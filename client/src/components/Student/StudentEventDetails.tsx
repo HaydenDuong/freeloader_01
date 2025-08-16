@@ -127,13 +127,16 @@ const StudentEventDetails: React.FC = () => {
                     fontFamily: '-apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif',
                     margin: '-1rem auto 0 auto',
                     padding: '0',
+                    borderRadius: '8px',
+                    filter: "drop-shadow(0 0 0.8rem rgba(235, 5, 239, 0.38))"
                 }}>
                     {/* Hero Banner */}
                     <div style={{
-                        height: '300px',
+                        height: '200px',
                         background: 'linear-gradient(135deg, #667eea 0%, #764ba2 100%)',
                         position: 'relative',
                         overflow: 'hidden',
+                        borderRadius: '8px 8px 0 0',
                     }}>
                         <div style={{
                             position: 'absolute',

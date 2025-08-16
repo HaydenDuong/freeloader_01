@@ -3,9 +3,11 @@ import { Event } from '../../types';
 
 interface EventListProps {
   events: Event[];
+  onEditEvent: (event: Event) => void;
+  onDeleteEvent: (event: Event) => void;
 }
 
-const EventList: React.FC<EventListProps> = ({ events }) => {
+const EventList: React.FC<EventListProps> = ({ events, onEditEvent, onDeleteEvent }) => {
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -49,7 +51,25 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
           </div>
           
           <div className="event-footer">
-            <small>Created on {formatDate(event.created_at)}</small>
+            <div className="event-meta-info">
+              <small>Created on {formatDate(event.created_at)}</small>
+            </div>
+            <div className="event-actions">
+              <button 
+                className="edit-button"
+                onClick={() => onEditEvent(event)}
+                title="Edit Event"
+              >
+                ✏️ Edit
+              </button>
+              <button 
+                className="delete-button"
+                onClick={() => onDeleteEvent(event)}
+                title="Delete Event"
+              >
+                🗑️ Delete
+              </button>
+            </div>
           </div>
         </div>
       ))}

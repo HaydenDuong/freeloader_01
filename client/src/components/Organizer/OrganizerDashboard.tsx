@@ -3,15 +3,20 @@ import { useAuth } from '../../context/AuthContext';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
 import CreateEventForm from './CreateEventForm';
+import EditEventForm from './EditEventForm';
 import EventList from './EventList';
+import DeleteConfirmationModal from './DeleteConfirmationModal';
 import './Organizer.css';
 
 const OrganizerDashboard: React.FC = () => {
   const { user, logout } = useAuth();
   const [events, setEvents] = useState<Event[]>([]);
   const [showCreateForm, setShowCreateForm] = useState(false);
+  const [editingEvent, setEditingEvent] = useState<Event | null>(null);
+  const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [deleteLoading, setDeleteLoading] = useState(false);
 
   useEffect(() => {
     fetchMyEvents();
@@ -32,6 +37,45 @@ const OrganizerDashboard: React.FC = () => {
   const handleEventCreated = (newEvent: Event) => {
     setEvents([...events, newEvent]);
     setShowCreateForm(false);
+  };
+
+  const handleEventUpdated = (updatedEvent: Event) => {
+    setEvents(events.map(event => 
+      event.id === updatedEvent.id ? updatedEvent : event
+    ));
+    setEditingEvent(null);
+  };
+
+  const handleEditEvent = (event: Event) => {
+    setEditingEvent(event);
+    setShowCreateForm(false); // Hide create form if open
+  };
+
+  const handleDeleteEvent = (event: Event) => {
+    setDeletingEvent(event);
+  };
+
+  const confirmDeleteEvent = async () => {
+    if (!deletingEvent) return;
+    
+    setDeleteLoading(true);
+    try {
+      await eventsAPI.deleteEvent(deletingEvent.id);
+      setEvents(events.filter(event => event.id !== deletingEvent.id));
+      setDeletingEvent(null);
+    } catch (err: any) {
+      setError(err.response?.data?.message || 'Failed to delete event');
+    } finally {
+      setDeleteLoading(false);
+    }
+  };
+
+  const cancelDelete = () => {
+    setDeletingEvent(null);
+  };
+
+  const cancelEdit = () => {
+    setEditingEvent(null);
   };
 
   const handleLogout = () => {
@@ -56,7 +100,10 @@ const OrganizerDashboard: React.FC = () => {
         <div className="dashboard-content">
           <div className="dashboard-actions">
             <button
-              onClick={() => setShowCreateForm(!showCreateForm)}
+              onClick={() => {
+                setShowCreateForm(!showCreateForm);
+                setEditingEvent(null); // Hide edit form if open
+              }}
               className="create-event-button"
             >
               {showCreateForm ? 'Cancel' : 'Create New Event'}
@@ -67,6 +114,14 @@ const OrganizerDashboard: React.FC = () => {
             <CreateEventForm
               onEventCreated={handleEventCreated}
               onCancel={() => setShowCreateForm(false)}
+            />
+          )}
+
+          {editingEvent && (
+            <EditEventForm
+              event={editingEvent}
+              onEventUpdated={handleEventUpdated}
+              onCancel={cancelEdit}
             />
           )}
 
@@ -82,11 +137,25 @@ const OrganizerDashboard: React.FC = () => {
                 <p>Click "Create New Event" to get started!</p>
               </div>
             ) : (
-              <EventList events={events} />
+              <EventList 
+                events={events} 
+                onEditEvent={handleEditEvent}
+                onDeleteEvent={handleDeleteEvent}
+              />
             )}
           </div>
         </div>
       </main>
+
+      {/* Delete Confirmation Modal */}
+      {deletingEvent && (
+        <DeleteConfirmationModal
+          event={deletingEvent}
+          onConfirm={confirmDeleteEvent}
+          onCancel={cancelDelete}
+          isDeleting={deleteLoading}
+        />
+      )}
     </div>
   );
 };

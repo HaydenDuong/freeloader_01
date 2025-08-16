@@ -36,6 +36,18 @@ export const eventsAPI = {
   }): Promise<{ message: string; event: Event }> =>
     api.post('/events', eventData).then(res => res.data),
   
+  updateEvent: (eventId: number, eventData: {
+    title: string;
+    description: string;
+    location: string;
+    dateTime: string;
+    goodsProvided: string[];
+  }): Promise<{ message: string; event: Event }> =>
+    api.put(`/events/${eventId}`, eventData).then(res => res.data),
+  
+  deleteEvent: (eventId: number): Promise<{ message: string; deletedEventId: number }> =>
+    api.delete(`/events/${eventId}`).then(res => res.data),
+  
   getAllEvents: (): Promise<EventsResponse> =>
     api.get('/events').then(res => res.data),
   

@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Event } from '../../types';
 
 interface StudentEventListProps {
@@ -8,12 +9,14 @@ interface StudentEventListProps {
   isPast?: boolean;
 }
 
-const StudentEventList: React.FC<StudentEventListProps> = ({ 
-  events, 
-  rsvpEvents, 
-  onRsvpToggle, 
-  isPast = false 
+
+const StudentEventList: React.FC<StudentEventListProps> = ({
+  events,
+  rsvpEvents,
+  onRsvpToggle,
+  isPast = false
 }) => {
+  const navigate = useNavigate();
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -40,9 +43,11 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
       {events.map((event) => {
         const isRsvped = rsvpEvents.has(event.id);
         return (
-          <div 
-            key={event.id} 
+          <div
+            key={event.id}
             className={`student-event-card ${isPast ? 'past-event' : ''} ${isEventSoon(event.date_time) ? 'event-soon' : ''} ${isRsvped ? 'rsvped' : ''}`}
+            style={{ cursor: 'pointer' }}
+            onClick={() => navigate(`/student/event/${event.id}`)}
           >
             <div className="event-header">
               <h3 className="event-title">{event.title}</h3>
@@ -57,21 +62,21 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
                 )}
               </div>
             </div>
-          
+
             <div className="event-body">
               <p className="event-description">{event.description}</p>
-              
+
               <div className="event-details">
                 <div className="detail-row">
                   <span className="detail-icon">📍</span>
                   <strong>Location:</strong> {event.location}
                 </div>
-                
+
                 <div className="detail-row">
                   <span className="detail-icon">👤</span>
                   <strong>Organizer:</strong> {event.organizer_email}
                 </div>
-                
+
                 <div className="detail-row">
                   <span className="detail-icon">🎁</span>
                   <strong>Free Stuff:</strong>
@@ -84,10 +89,10 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
                   </div>
                 </div>
               </div>
-              
+
               {/* RSVP Button */}
               {!isPast && (
-                <div className="event-actions">
+                <div className="event-actions" onClick={e => e.stopPropagation()}>
                   <button
                     className={`rsvp-button ${isRsvped ? 'rsvped' : ''}`}
                     onClick={() => onRsvpToggle(event.id)}

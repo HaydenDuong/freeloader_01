@@ -7,6 +7,7 @@ import Login from './components/Auth/Login';
 import Register from './components/Auth/Register';
 import OrganizerDashboard from './components/Organizer/OrganizerDashboard';
 import StudentDashboard from './components/Student/StudentDashboard';
+import SavedEvents from './components/Student/SavedEvents';
 import './App.css';
 
 function App() {
@@ -47,6 +48,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="student">
                   <StudentDashboard />
+                </ProtectedRoute>
+              } 
+            />
+            <Route 
+              path="/student/saved-events" 
+              element={
+                <ProtectedRoute requiredRole="student">
+                  <SavedEvents />
                 </ProtectedRoute>
               } 
             />

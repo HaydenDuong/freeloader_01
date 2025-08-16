@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { Link } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
@@ -97,6 +98,10 @@ const StudentDashboard: React.FC = () => {
                 <h3>Upcoming</h3>
                 <div className="stat-number">{upcomingEvents.length}</div>
               </div>
+              <Link to="/student/saved-events" className="stat-card">
+                <h3>Saved Events</h3>
+                <div className="stat-number">{rsvpEvents.size}</div>
+              </Link>
               <div className="stat-card">
                 <h3>Past Events</h3>
                 <div className="stat-number">{pastEvents.length}</div>

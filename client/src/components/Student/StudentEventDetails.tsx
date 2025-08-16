@@ -292,7 +292,7 @@ const StudentEventDetails: React.FC = () => {
                                                     e.currentTarget.style.boxShadow = 'none';
                                                 }}
                                             >
-                                                {isRsvped ? 'Registered' : 'Select tickets'}
+                                                {isRsvped ? 'Event Saved' : 'Save Event'}
                                             </button>
                                         )}
 
@@ -301,19 +301,25 @@ const StudentEventDetails: React.FC = () => {
                                             fontSize: '0.9rem',
                                             color: '#6c757d'
                                         }}>
-                                            <div style={{ fontWeight: '600', marginBottom: '0.25rem' }}>
-                                                NEED HELP?
-                                            </div>
                                             <button style={{
-                                                background: 'none',
+                                                background: '#007bff',
                                                 border: '1px solid #007bff',
-                                                color: '#007bff',
+                                                color: 'white',
                                                 padding: '0.5rem 1rem',
                                                 borderRadius: '4px',
                                                 fontSize: '0.85rem',
                                                 cursor: 'pointer'
-                                            }}>
-                                                Contact organizer
+                                            }}
+                                                onMouseOver={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(-1px)';
+                                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                                                }}
+                                                onMouseOut={(e) => {
+                                                    e.currentTarget.style.transform = 'translateY(0)';
+                                                    e.currentTarget.style.boxShadow = 'none';
+                                                }}
+                                            >
+                                                Sync to Calendar
                                             </button>
                                         </div>
                                     </div>

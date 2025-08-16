@@ -2,7 +2,9 @@ import React, { useState } from 'react';
 import { useAuth } from '../../context/AuthContext';
 import { authAPI } from '../../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
+import DotBackground from './DotBackground';
 import './Auth.css';
+import './OrganizerLogin.css';
 
 const OrganizerLogin: React.FC = () => {
   const [email, setEmail] = useState('');
@@ -35,7 +37,8 @@ const OrganizerLogin: React.FC = () => {
   };
 
   return (
-    <div className="auth-container">
+    <div className="organizer-login-container">
+      <DotBackground />
       <div className="auth-card">
         <h2>FreeLoader Hub</h2>
         <form onSubmit={handleSubmit} className="auth-form">

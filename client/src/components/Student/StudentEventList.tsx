@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
 import { Event } from '../../types';
 
 interface StudentEventListProps {
@@ -6,7 +6,40 @@ interface StudentEventListProps {
   isPast?: boolean;
 }
 
+// Local storage key for RSVPs
+const RSVP_STORAGE_KEY = 'student_rsvps';
+
 const StudentEventList: React.FC<StudentEventListProps> = ({ events, isPast = false }) => {
+  const [rsvpEvents, setRsvpEvents] = useState<Set<number>>(new Set());
+
+  // Load RSVPs from localStorage on component mount
+  useEffect(() => {
+    const savedRsvps = localStorage.getItem(RSVP_STORAGE_KEY);
+    if (savedRsvps) {
+      try {
+        const rsvpArray = JSON.parse(savedRsvps);
+        setRsvpEvents(new Set(rsvpArray));
+      } catch (error) {
+        console.error('Error loading RSVPs:', error);
+      }
+    }
+  }, []);
+
+  // Save RSVPs to localStorage whenever they change
+  useEffect(() => {
+    localStorage.setItem(RSVP_STORAGE_KEY, JSON.stringify(Array.from(rsvpEvents)));
+  }, [rsvpEvents]);
+
+  const handleRsvpToggle = (eventId: number) => {
+    const newRsvpEvents = new Set(rsvpEvents);
+    if (newRsvpEvents.has(eventId)) {
+      newRsvpEvents.delete(eventId);
+    } else {
+      newRsvpEvents.add(eventId);
+    }
+    setRsvpEvents(newRsvpEvents);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -29,51 +62,69 @@ const StudentEventList: React.FC<StudentEventListProps> = ({ events, isPast = fa
 
   return (
     <div className="student-event-list">
-      {events.map((event) => (
-        <div 
-          key={event.id} 
-          className={`student-event-card ${isPast ? 'past-event' : ''} ${isEventSoon(event.date_time) ? 'event-soon' : ''}`}
-        >
-          <div className="event-header">
-            <h3 className="event-title">{event.title}</h3>
-            <div className="event-meta">
-              <span className="event-date">{formatDate(event.date_time)}</span>
-              {isEventSoon(event.date_time) && !isPast && (
-                <span className="event-badge soon">Starting Soon!</span>
-              )}
-              {isPast && <span className="event-badge past">Past Event</span>}
+      {events.map((event) => {
+        const isRsvped = rsvpEvents.has(event.id);
+        return (
+          <div 
+            key={event.id} 
+            className={`student-event-card ${isPast ? 'past-event' : ''} ${isEventSoon(event.date_time) ? 'event-soon' : ''} ${isRsvped ? 'rsvped' : ''}`}
+          >
+            <div className="event-header">
+              <h3 className="event-title">{event.title}</h3>
+              <div className="event-meta">
+                <span className="event-date">{formatDate(event.date_time)}</span>
+                {isEventSoon(event.date_time) && !isPast && (
+                  <span className="event-badge soon">Starting Soon!</span>
+                )}
+                {isPast && <span className="event-badge past">Past Event</span>}
+                {isRsvped && !isPast && (
+                  <span className="event-badge rsvp">Going!</span>
+                )}
+              </div>
             </div>
-          </div>
           
-          <div className="event-body">
-            <p className="event-description">{event.description}</p>
-            
-            <div className="event-details">
-              <div className="detail-row">
-                <span className="detail-icon">📍</span>
-                <strong>Location:</strong> {event.location}
-              </div>
+            <div className="event-body">
+              <p className="event-description">{event.description}</p>
               
-              <div className="detail-row">
-                <span className="detail-icon">👤</span>
-                <strong>Organizer:</strong> {event.organizer_email}
-              </div>
-              
-              <div className="detail-row">
-                <span className="detail-icon">🎁</span>
-                <strong>Free Stuff:</strong>
-                <div className="goods-grid">
-                  {event.goodsProvided.map((good, index) => (
-                    <span key={index} className="good-tag">
-                      {good}
-                    </span>
-                  ))}
+              <div className="event-details">
+                <div className="detail-row">
+                  <span className="detail-icon">📍</span>
+                  <strong>Location:</strong> {event.location}
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-icon">👤</span>
+                  <strong>Organizer:</strong> {event.organizer_email}
+                </div>
+                
+                <div className="detail-row">
+                  <span className="detail-icon">🎁</span>
+                  <strong>Free Stuff:</strong>
+                  <div className="goods-grid">
+                    {event.goodsProvided.map((good, index) => (
+                      <span key={index} className="good-tag">
+                        {good}
+                      </span>
+                    ))}
+                  </div>
                 </div>
               </div>
+              
+              {/* RSVP Button */}
+              {!isPast && (
+                <div className="event-actions">
+                  <button
+                    className={`rsvp-button ${isRsvped ? 'rsvped' : ''}`}
+                    onClick={() => handleRsvpToggle(event.id)}
+                  >
+                    {isRsvped ? '✓ Going!' : '+ I\'m Interested'}
+                  </button>
+                </div>
+              )}
             </div>
           </div>
-        </div>
-      ))}
+        );
+      })}
     </div>
   );
 };

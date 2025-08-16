@@ -3,6 +3,7 @@ import { useAuth } from '../../context/AuthContext';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
 import StudentEventList from './StudentEventList';
+import EventCalendar from './EventCalendar';
 import './Student.css';
 
 const StudentDashboard: React.FC = () => {
@@ -10,6 +11,7 @@ const StudentDashboard: React.FC = () => {
   const [events, setEvents] = useState<Event[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [showCalendar, setShowCalendar] = useState(false);
 
   useEffect(() => {
     fetchAllEvents();
@@ -29,6 +31,10 @@ const StudentDashboard: React.FC = () => {
 
   const handleLogout = () => {
     logout();
+  };
+
+  const handleCalendarToggle = () => {
+    setShowCalendar(!showCalendar);
   };
 
   // Filter events by upcoming vs past
@@ -80,9 +86,25 @@ const StudentDashboard: React.FC = () => {
             </div>
           ) : (
             <div className="events-sections">
+              {/* Calendar Section */}
+              {showCalendar && (
+                <EventCalendar 
+                  events={events} 
+                  onEventClick={(event) => console.log('Event clicked:', event)}
+                />
+              )}
+
               {upcomingEvents.length > 0 && (
                 <div className="events-section">
-                  <h2>🚀 Upcoming Events ({upcomingEvents.length})</h2>
+                  <div className="section-header">
+                    <h2>🚀 Upcoming Events ({upcomingEvents.length})</h2>
+                    <button 
+                      className="calendar-toggle-button"
+                      onClick={handleCalendarToggle}
+                    >
+                      📅 {showCalendar ? 'Hide Calendar' : 'Calendar View'}
+                    </button>
+                  </div>
                   <StudentEventList events={upcomingEvents} />
                 </div>
               )}

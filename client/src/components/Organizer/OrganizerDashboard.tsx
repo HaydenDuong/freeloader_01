@@ -6,6 +6,7 @@ import CreateEventForm from './CreateEventForm';
 import EditEventForm from './EditEventForm';
 import EventList from './EventList';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import EngagementMetrics from './EngagementMetrics';
 import './Organizer.css';
 
 const OrganizerDashboard: React.FC = () => {
@@ -14,6 +15,7 @@ const OrganizerDashboard: React.FC = () => {
   const [showCreateForm, setShowCreateForm] = useState(false);
   const [editingEvent, setEditingEvent] = useState<Event | null>(null);
   const [deletingEvent, setDeletingEvent] = useState<Event | null>(null);
+  const [showMetrics, setShowMetrics] = useState(false);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
   const [deleteLoading, setDeleteLoading] = useState(false);
@@ -119,6 +121,13 @@ const OrganizerDashboard: React.FC = () => {
             >
               {showCreateForm ? 'Cancel' : 'Create New Event'}
             </button>
+            
+            <button
+              onClick={() => setShowMetrics(true)}
+              className="metrics-button"
+            >
+              📊 View Analytics
+            </button>
           </div>
 
           {showCreateForm && (
@@ -166,6 +175,11 @@ const OrganizerDashboard: React.FC = () => {
           onCancel={cancelDelete}
           isDeleting={deleteLoading}
         />
+      )}
+
+      {/* Engagement Metrics Modal */}
+      {showMetrics && (
+        <EngagementMetrics onClose={() => setShowMetrics(false)} />
       )}
     </div>
   );

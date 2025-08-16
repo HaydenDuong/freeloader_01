@@ -1,5 +1,6 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import { Event } from '../../types';
+import { eventsAPI } from '../../utils/api';
 
 interface StudentEventListProps {
   events: Event[];
@@ -14,6 +15,14 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
   onRsvpToggle, 
   isPast = false 
 }) => {
+  // Track event views when component mounts
+  useEffect(() => {
+    events.forEach(event => {
+      eventsAPI.trackEventView(event.id).catch(err => {
+        console.error('Error tracking view for event', event.id, err);
+      });
+    });
+  }, [events]);
 
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
@@ -36,18 +45,35 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
   };
 
   return (
-    <div className="student-event-list">
+    <div className="student-event-grid">
       {events.map((event) => {
         const isRsvped = rsvpEvents.has(event.id);
         return (
           <div 
             key={event.id} 
-            className={`student-event-card ${isPast ? 'past-event' : ''} ${isEventSoon(event.date_time) ? 'event-soon' : ''} ${isRsvped ? 'rsvped' : ''}`}
+            className={`student-event-card-modern ${isPast ? 'past-event' : ''} ${isEventSoon(event.date_time) ? 'event-soon' : ''} ${isRsvped ? 'rsvped' : ''}`}
           >
-            <div className="event-header">
-              <h3 className="event-title">{event.title}</h3>
-              <div className="event-meta">
-                <span className="event-date">{formatDate(event.date_time)}</span>
+            {/* Event Image */}
+            <div className="event-image-container">
+              {event.image_url ? (
+                <img 
+                  src={event.image_url} 
+                  alt={event.title}
+                  className="event-image"
+                  onError={(e) => {
+                    const target = e.target as HTMLImageElement;
+                    target.src = 'https://via.placeholder.com/400x200/667eea/ffffff?text=Event+Image';
+                  }}
+                />
+              ) : (
+                <div className="event-image-placeholder">
+                  <span className="placeholder-icon">🎉</span>
+                  <span className="placeholder-text">Event Image</span>
+                </div>
+              )}
+              
+              {/* Badges Overlay */}
+              <div className="event-badges">
                 {isEventSoon(event.date_time) && !isPast && (
                   <span className="event-badge soon">Starting Soon!</span>
                 )}
@@ -56,46 +82,59 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
                   <span className="event-badge rsvp">Going!</span>
                 )}
               </div>
-            </div>
-          
-            <div className="event-body">
-              <p className="event-description">{event.description}</p>
               
-              <div className="event-details">
-                <div className="detail-row">
-                  <span className="detail-icon">📍</span>
-                  <strong>Location:</strong> {event.location}
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-icon">👤</span>
-                  <strong>Organizer:</strong> {event.organizer_email}
-                </div>
-                
-                <div className="detail-row">
-                  <span className="detail-icon">🎁</span>
-                  <strong>Free Stuff:</strong>
-                  <div className="goods-grid">
-                    {event.goodsProvided.map((good, index) => (
-                      <span key={index} className="good-tag">
-                        {good}
-                      </span>
-                    ))}
-                  </div>
-                </div>
+              <div className="event-date-overlay">
+                {formatDate(event.date_time)}
+              </div>
+            </div>
+            
+            {/* Event Content */}
+            <div className="event-content">
+              <div className="event-header">
+                <h3 className="event-title">{event.title}</h3>
               </div>
               
-              {/* RSVP Button */}
-              {!isPast && (
-                <div className="event-actions">
-                  <button
-                    className={`rsvp-button ${isRsvped ? 'rsvped' : ''}`}
-                    onClick={() => onRsvpToggle(event.id)}
-                  >
-                    {isRsvped ? '✓ Going!' : '+ I\'m Interested'}
-                  </button>
+              <div className="event-details">
+                <p className="event-description">{event.description}</p>
+                
+                <div className="event-info">
+                  <div className="info-item">
+                    <span className="info-icon">📍</span>
+                    <span>{event.location}</span>
+                  </div>
+                  
+                  <div className="info-item">
+                    <span className="info-icon">👤</span>
+                    <span>{event.organizer_email}</span>
+                  </div>
+                  
+                  <div className="info-item">
+                    <span className="info-icon">🎁</span>
+                    <div className="goods-list">
+                      {event.goodsProvided.slice(0, 3).map((good, index) => (
+                        <span key={index} className="good-tag-small">
+                          {good}
+                        </span>
+                      ))}
+                      {event.goodsProvided.length > 3 && (
+                        <span className="more-goods">+{event.goodsProvided.length - 3} more</span>
+                      )}
+                    </div>
+                  </div>
                 </div>
-              )}
+                
+                {/* RSVP Button */}
+                {!isPast && (
+                  <div className="event-actions">
+                    <button
+                      className={`rsvp-button ${isRsvped ? 'rsvped' : ''}`}
+                      onClick={() => onRsvpToggle(event.id)}
+                    >
+                      {isRsvped ? '✓ Going!' : '+ I\'m Interested'}
+                    </button>
+                  </div>
+                )}
+              </div>
             </div>
           </div>
         );

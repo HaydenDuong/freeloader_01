@@ -11,6 +11,7 @@ export interface Event {
   location: string;
   date_time: string;
   goodsProvided: string[];
+  image_url?: string;
   organizer_id: number;
   organizer_email?: string;
   created_at: string;

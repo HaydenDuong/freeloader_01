@@ -35,6 +35,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
   const [location, setLocation] = useState(event.location || '');
   const [dateTime, setDateTime] = useState(formatDateTimeForInput(event.date_time));
   const [goodsProvided, setGoodsProvided] = useState<string[]>(event.goodsProvided ? [...event.goodsProvided] : ['']);
+  const [imageUrl, setImageUrl] = useState(event.image_url || '');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -73,6 +74,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
         location,
         dateTime,
         goodsProvided: filteredGoods,
+        imageUrl: imageUrl.trim() || undefined,
       });
 
       onEventUpdated(response.event);
@@ -149,6 +151,19 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
             disabled={loading}
             min={minDate}
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="edit-imageUrl">Event Image URL</label>
+          <input
+            type="url"
+            id="edit-imageUrl"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            disabled={loading}
+            placeholder="https://example.com/image.jpg (optional)"
+          />
+          <small className="form-help">Add a URL to an image that represents your event</small>
         </div>
 
         <div className="form-group">

@@ -13,6 +13,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
   const [location, setLocation] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [goodsProvided, setGoodsProvided] = useState<string[]>(['']);
+  const [imageUrl, setImageUrl] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -51,6 +52,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
         location,
         dateTime,
         goodsProvided: filteredGoods,
+        imageUrl: imageUrl.trim() || undefined,
       });
 
       onEventCreated(response.event);
@@ -61,6 +63,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
       setLocation('');
       setDateTime('');
       setGoodsProvided(['']);
+      setImageUrl('');
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create event');
     } finally {
@@ -128,6 +131,19 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
             disabled={loading}
             min={minDate}
           />
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="imageUrl">Event Image URL</label>
+          <input
+            type="url"
+            id="imageUrl"
+            value={imageUrl}
+            onChange={(e) => setImageUrl(e.target.value)}
+            disabled={loading}
+            placeholder="https://example.com/image.jpg (optional)"
+          />
+          <small className="form-help">Add a URL to an image that represents your event</small>
         </div>
 
         <div className="form-group">

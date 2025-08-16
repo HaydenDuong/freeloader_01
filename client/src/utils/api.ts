@@ -95,6 +95,7 @@ export const eventsAPI = {
     location: string;
     dateTime: string;
     goodsProvided: string[];
+    imageUrl?: string;
   }): Promise<{ message: string; event: Event }> =>
     api.post('/events', eventData).then(res => res.data),
   
@@ -104,6 +105,7 @@ export const eventsAPI = {
     location: string;
     dateTime: string;
     goodsProvided: string[];
+    imageUrl?: string;
   }): Promise<{ message: string; event: Event }> =>
     api.put(`/events/${eventId}`, eventData).then(res => res.data),
   
@@ -115,6 +117,35 @@ export const eventsAPI = {
   
   getMyEvents: (): Promise<EventsResponse> =>
     api.get('/events/my-events').then(res => res.data),
+
+  // Engagement tracking
+  trackEventView: (eventId: number): Promise<{ message: string }> =>
+    api.post(`/events/${eventId}/view`).then(res => res.data),
+
+  toggleRsvp: (eventId: number, action: 'add' | 'remove'): Promise<{ message: string; rsvp: boolean }> =>
+    api.post(`/events/${eventId}/rsvp`, { action }).then(res => res.data),
+
+  getMyRsvps: (): Promise<{ rsvpEventIds: number[] }> =>
+    api.get('/events/my-rsvps').then(res => res.data),
+
+  getEngagementMetrics: (): Promise<{
+    events: Array<{
+      id: number;
+      title: string;
+      date_time: string;
+      created_at: string;
+      unique_views: number;
+      rsvp_count: number;
+    }>;
+    summary: {
+      totalEvents: number;
+      totalViews: number;
+      totalRsvps: number;
+      avgViewsPerEvent: number;
+      avgRsvpsPerEvent: number;
+    };
+  }> =>
+    api.get('/events/metrics').then(res => res.data),
 };
 
 export default api;

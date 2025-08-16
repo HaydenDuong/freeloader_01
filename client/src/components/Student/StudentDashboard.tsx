@@ -19,15 +19,22 @@ const StudentDashboard: React.FC = () => {
     loadRsvpData();
   }, []);
 
-  // Load RSVP data from localStorage
-  const loadRsvpData = () => {
-    const savedRsvps = localStorage.getItem('student_rsvps');
-    if (savedRsvps) {
-      try {
-        const rsvpArray = JSON.parse(savedRsvps);
-        setRsvpEvents(new Set(rsvpArray));
-      } catch (error) {
-        console.error('Error loading RSVPs:', error);
+  // Load RSVP data from database
+  const loadRsvpData = async () => {
+    try {
+      const response = await eventsAPI.getMyRsvps();
+      setRsvpEvents(new Set(response.rsvpEventIds));
+    } catch (error) {
+      console.error('Error loading RSVPs:', error);
+      // Fallback to localStorage for backwards compatibility
+      const savedRsvps = localStorage.getItem('student_rsvps');
+      if (savedRsvps) {
+        try {
+          const rsvpArray = JSON.parse(savedRsvps);
+          setRsvpEvents(new Set(rsvpArray));
+        } catch (err) {
+          console.error('Error parsing localStorage RSVPs:', err);
+        }
       }
     }
   };
@@ -53,17 +60,28 @@ const StudentDashboard: React.FC = () => {
   };
 
   // Handle RSVP changes from child components
-  const handleRsvpToggle = (eventId: number) => {
-    const newRsvpEvents = new Set(rsvpEvents);
-    if (newRsvpEvents.has(eventId)) {
-      newRsvpEvents.delete(eventId);
-    } else {
-      newRsvpEvents.add(eventId);
-    }
-    setRsvpEvents(newRsvpEvents);
+  const handleRsvpToggle = async (eventId: number) => {
+    const isCurrentlyRsvped = rsvpEvents.has(eventId);
+    const action = isCurrentlyRsvped ? 'remove' : 'add';
     
-    // Save to localStorage
-    localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
+    try {
+      await eventsAPI.toggleRsvp(eventId, action);
+      
+      // Update local state
+      const newRsvpEvents = new Set(rsvpEvents);
+      if (isCurrentlyRsvped) {
+        newRsvpEvents.delete(eventId);
+      } else {
+        newRsvpEvents.add(eventId);
+      }
+      setRsvpEvents(newRsvpEvents);
+      
+      // Also update localStorage for backwards compatibility
+      localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
+    } catch (error) {
+      console.error('Error toggling RSVP:', error);
+      // Don't update state if API call failed
+    }
   };
 
   // Filter events by upcoming vs past

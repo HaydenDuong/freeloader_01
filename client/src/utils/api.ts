@@ -83,8 +83,8 @@ export const authAPI = {
   register: (email: string, password: string, role: 'organizer' | 'student'): Promise<AuthResponse> =>
     api.post('/auth/register', { email, password, role }).then(res => res.data),
   
-  login: (email: string, password: string): Promise<AuthResponse> =>
-    api.post('/auth/login', { email, password }).then(res => res.data),
+  login: (email: string, password: string, userType: 'organizer' | 'student'): Promise<AuthResponse> =>
+    api.post('/auth/login', { email, password, userType }).then(res => res.data),
 };
 
 // Events API

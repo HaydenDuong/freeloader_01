@@ -20,13 +20,13 @@ router.post('/register', async (req, res) => {
     }
 
     // Check if user already exists
-    db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
+    db.get('SELECT * FROM users WHERE email = ? AND role = ?', [email, role], async (err, user) => {
       if (err) {
         return res.status(500).json({ message: 'Database error' });
       }
 
       if (user) {
-        return res.status(400).json({ message: 'User already exists' });
+        return res.status(400).json({ message: 'User with this email and role already exists' });
       }
 
       // Hash password
@@ -64,14 +64,14 @@ router.post('/register', async (req, res) => {
 // Login user
 router.post('/login', (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { email, password, userType } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ message: 'Email and password are required' });
+    if (!email || !password || !userType) {
+      return res.status(400).json({ message: 'Email, password, and userType are required' });
     }
 
     // Find user
-    db.get('SELECT * FROM users WHERE email = ?', [email], async (err, user) => {
+    db.get('SELECT * FROM users WHERE email = ? AND role = ?', [email, userType], async (err, user) => {
       if (err) {
         return res.status(500).json({ message: 'Database error' });
       }

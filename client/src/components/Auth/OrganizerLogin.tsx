@@ -4,7 +4,7 @@ import { authAPI } from '../../utils/api';
 import { useNavigate, Link } from 'react-router-dom';
 import './Auth.css';
 
-const Login: React.FC = () => {
+const OrganizerLogin: React.FC = () => {
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [error, setError] = useState('');
@@ -18,7 +18,7 @@ const Login: React.FC = () => {
     setError('');
 
     try {
-      const response = await authAPI.login(email, password, 'student');
+      const response = await authAPI.login(email, password, 'organizer');
       login(response.token, response.user);
       
       // Redirect based on user role
@@ -37,7 +37,7 @@ const Login: React.FC = () => {
   return (
     <div className="auth-container">
       <div className="auth-card">
-        <h2>FreeLoader</h2>
+        <h2>FreeLoader Hub</h2>
         <form onSubmit={handleSubmit} className="auth-form">
           {error && <div className="error-message">{error}</div>}
           
@@ -71,14 +71,11 @@ const Login: React.FC = () => {
         </form>
 
         <p className="auth-link">
-          Don't have an account? <Link to="/register">Sign up here</Link>
-        </p>
-        <p className="auth-link">
-          Are you an organizer? <Link to="/organizer-login">Login to the Hub</Link>
+          Not an organizer? <Link to="/login">Login as a student</Link>
         </p>
       </div>
     </div>
   );
 };
 
-export default Login;
+export default OrganizerLogin;

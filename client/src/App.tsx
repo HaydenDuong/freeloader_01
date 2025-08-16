@@ -4,6 +4,7 @@ import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
 import Login from './components/Auth/Login';
+import OrganizerLogin from './components/Auth/OrganizerLogin';
 import Register from './components/Auth/Register';
 import OrganizerDashboard from './components/Organizer/OrganizerDashboard';
 import StudentDashboard from './components/Student/StudentDashboard';
@@ -22,6 +23,14 @@ function App() {
               element={
                 <PublicRoute>
                   <Login />
+                </PublicRoute>
+              } 
+            />
+            <Route 
+              path="/organizer-login" 
+              element={
+                <PublicRoute>
+                  <OrganizerLogin />
                 </PublicRoute>
               } 
             />

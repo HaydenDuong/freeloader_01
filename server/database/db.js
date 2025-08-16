@@ -10,10 +10,11 @@ const initializeDatabase = () => {
   db.serialize(() => {
     db.run(`CREATE TABLE IF NOT EXISTS users (
       id INTEGER PRIMARY KEY AUTOINCREMENT,
-      email TEXT UNIQUE NOT NULL,
+      email TEXT NOT NULL,
       password TEXT NOT NULL,
       role TEXT NOT NULL CHECK(role IN ('organizer', 'student')),
-      created_at DATETIME DEFAULT CURRENT_TIMESTAMP
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      UNIQUE(email, role)
     )`);
 
     // Create events table

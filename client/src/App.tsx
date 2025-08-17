@@ -7,6 +7,7 @@ import Login from './components/Auth/Login';
 import OrganizerLogin from './components/Auth/OrganizerLogin';
 import Register from './components/Auth/Register';
 import OrganizerDashboard from './components/Organizer/OrganizerDashboard';
+import OrganizerEventEdit from './components/Organizer/OrganizerEventEdit';
 import StudentDashboard from './components/Student/StudentDashboard';
 import SavedEvents from './components/Student/SavedEvents';
 import EditProfile from './components/Student/EditProfile';
@@ -52,6 +53,14 @@ function App() {
               element={
                 <ProtectedRoute requiredRole="organizer">
                   <OrganizerDashboard />
+                </ProtectedRoute>
+              }
+            />
+            <Route
+              path="/organizer/event/:id"
+              element={
+                <ProtectedRoute requiredRole="organizer">
+                  <OrganizerEventEdit />
                 </ProtectedRoute>
               }
             />

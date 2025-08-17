@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Event } from '../../types';
-import { eventsAPI } from '../../utils/api';
+import { eventsAPI, engagementAPI } from '../../utils/api';
 import LeafletMap from '../LeafletMap';
 import './Student.css';
 
@@ -40,7 +40,17 @@ const StudentEventDetails: React.FC = () => {
                 const res = await eventsAPI.getAllEvents();
                 const found = res.events.find(e => e.id === Number(id));
                 setEvent(found || null);
-                if (!found) setError('Event not found.');
+                if (!found) {
+                    setError('Event not found.');
+                } else {
+                    // Track the view when event is successfully loaded
+                    try {
+                        await engagementAPI.trackView(found.id);
+                    } catch (viewError) {
+                        // Silently fail if view tracking fails - don't disrupt user experience
+                        console.log('View tracking failed:', viewError);
+                    }
+                }
             } catch (err) {
                 setError('Failed to fetch event.');
             } finally {
@@ -90,17 +100,28 @@ const StudentEventDetails: React.FC = () => {
         return eventDate.getTime() <= now.getTime();
     };
 
-    const handleRsvpToggle = (eventId: number) => {
+    const handleRsvpToggle = async (eventId: number) => {
+        const isCurrentlyRsvped = rsvpEvents.has(eventId);
         const newRsvpEvents = new Set(rsvpEvents);
-        if (newRsvpEvents.has(eventId)) {
-            newRsvpEvents.delete(eventId);
-        } else {
-            newRsvpEvents.add(eventId);
+        
+        try {
+            if (isCurrentlyRsvped) {
+                // Remove save
+                await engagementAPI.removeSave(eventId);
+                newRsvpEvents.delete(eventId);
+            } else {
+                // Add save
+                await engagementAPI.trackSave(eventId);
+                newRsvpEvents.add(eventId);
+            }
+            
+            setRsvpEvents(newRsvpEvents);
+            // Keep localStorage in sync for immediate UI feedback
+            localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
+        } catch (error) {
+            console.error('Failed to update RSVP:', error);
+            // Show user-friendly error or revert the change
         }
-        setRsvpEvents(newRsvpEvents);
-
-        // Save to localStorage
-        localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
     };
 
     if (loading) return (

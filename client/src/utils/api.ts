@@ -128,4 +128,27 @@ export const userAPI = {
   },
 };
 
+// Engagement API
+export const engagementAPI = {
+  trackView: (eventId: number): Promise<{ message: string; isNewView: boolean }> =>
+    api.post(`/engagement/view/${eventId}`).then(res => res.data),
+  
+  trackSave: (eventId: number): Promise<{ message: string; saved: boolean }> =>
+    api.post(`/engagement/save/${eventId}`).then(res => res.data),
+  
+  removeSave: (eventId: number): Promise<{ message: string; saved: boolean }> =>
+    api.delete(`/engagement/save/${eventId}`).then(res => res.data),
+  
+  getMetrics: (eventId: number): Promise<{
+    eventId: number;
+    metrics: {
+      totalViews: number;
+      totalSaves: number;
+      recentViews: number;
+      recentSaves: number;
+    }
+  }> =>
+    api.get(`/engagement/metrics/${eventId}`).then(res => res.data),
+};
+
 export default api;

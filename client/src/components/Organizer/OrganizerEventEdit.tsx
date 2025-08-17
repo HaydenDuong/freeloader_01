@@ -17,6 +17,7 @@ const OrganizerEventEdit: React.FC = () => {
   const [error, setError] = useState('');
   const [showDeleteModal, setShowDeleteModal] = useState(false);
   const [deleteLoading, setDeleteLoading] = useState(false);
+  const [isEditMode, setIsEditMode] = useState(false);
 
   // Form fields
   const [title, setTitle] = useState('');
@@ -131,12 +132,7 @@ const OrganizerEventEdit: React.FC = () => {
         goodsProvided: filteredGoods,
       });
 
-      setEvent(response.event);
-      setError('');
-      
-      // Show success message briefly then redirect
-      alert('Event updated successfully!');
-      navigate('/organizer');
+      handleUpdateSuccess(response.event);
     } catch (err: any) {
       if (err.response?.status === 401) {
         setError('Your session has expired. Please login again.');
@@ -175,6 +171,37 @@ const OrganizerEventEdit: React.FC = () => {
 
   const goBack = () => {
     navigate('/organizer');
+  };
+
+  const formatDate = (dateString: string) => {
+    const date = new Date(dateString);
+    return date.toLocaleString('en-US', {
+      weekday: 'long',
+      year: 'numeric',
+      month: 'long',
+      day: 'numeric',
+      hour: '2-digit',
+      minute: '2-digit',
+    });
+  };
+
+  const handleEditClick = () => {
+    setIsEditMode(true);
+  };
+
+  const handleCancelEdit = () => {
+    setIsEditMode(false);
+    // Reset form to original values
+    if (event) {
+      populateForm(event);
+    }
+  };
+
+  const handleUpdateSuccess = (updatedEvent: Event) => {
+    setEvent(updatedEvent);
+    setIsEditMode(false);
+    setError('');
+    alert('Event updated successfully!');
   };
 
   // Get minimum date (today)
@@ -252,116 +279,184 @@ const OrganizerEventEdit: React.FC = () => {
 
           <div className="edit-page-layout">
             <div className="edit-form-column">
-              <div className="edit-event-form">
-            <div className="edit-event-header">
-              <h3>✏️ Edit Event</h3>
-              <button 
-                onClick={() => setShowDeleteModal(true)}
-                className="delete-button"
-                type="button"
-              >
-                🗑️ Delete Event
-              </button>
-            </div>
+              {!isEditMode ? (
+                // Event Details View
+                <div className="event-details-view">
+                  <div className="event-details-header">
+                    <h3>📋 Event Details</h3>
+                    <div className="details-actions">
+                      <button 
+                        onClick={handleEditClick}
+                        className="edit-button"
+                      >
+                        ✏️ Edit Event
+                      </button>
+                    </div>
+                  </div>
 
-            <form onSubmit={handleSubmit}>
-              {error && <div className="error-message">{error}</div>}
+                  {error && <div className="error-message">{error}</div>}
 
-              <div className="form-group">
-                <label htmlFor="edit-title">Event Title *</label>
-                <input
-                  type="text"
-                  id="edit-title"
-                  value={title}
-                  onChange={(e) => setTitle(e.target.value)}
-                  required
-                  disabled={saving}
-                  placeholder="Enter event title"
-                />
-              </div>
+                  <div className="event-detail-section">
+                    <h4>Event Title</h4>
+                    <p className="detail-value">{event?.title}</p>
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="edit-description">Description *</label>
-                <textarea
-                  id="edit-description"
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  required
-                  disabled={saving}
-                  placeholder="Describe your event"
-                  rows={4}
-                />
-              </div>
+                  <div className="event-detail-section">
+                    <h4>Description</h4>
+                    <p className="detail-value">{event?.description}</p>
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="edit-location">Location *</label>
-                <input
-                  type="text"
-                  id="edit-location"
-                  value={location}
-                  onChange={(e) => setLocation(e.target.value)}
-                  required
-                  disabled={saving}
-                  placeholder="Event location"
-                />
-              </div>
+                  <div className="event-detail-section">
+                    <h4>Location</h4>
+                    <p className="detail-value">📍 {event?.location}</p>
+                  </div>
 
-              <div className="form-group">
-                <label htmlFor="edit-dateTime">Date & Time *</label>
-                <input
-                  type="datetime-local"
-                  id="edit-dateTime"
-                  value={dateTime}
-                  onChange={(e) => setDateTime(e.target.value)}
-                  required
-                  disabled={saving}
-                  min={minDate}
-                />
-              </div>
+                  <div className="event-detail-section">
+                    <h4>Date & Time</h4>
+                    <p className="detail-value">📅 {event && formatDate(event.date_time)}</p>
+                  </div>
 
-              <div className="form-group">
-                <label>Goods Provided *</label>
-                {goodsProvided.map((good, index) => (
-                  <div key={index} className="goods-input-row">
-                    <input
-                      type="text"
-                      value={good}
-                      onChange={(e) => updateGoodField(index, e.target.value)}
-                      placeholder="e.g., Free Pizza, T-shirts"
-                      disabled={saving}
-                    />
-                    {goodsProvided.length > 1 && (
+                  <div className="event-detail-section">
+                    <h4>Goods Provided</h4>
+                    <div className="goods-display">
+                      {event?.goodsProvided.map((good, index) => (
+                        <span key={index} className="good-tag">
+                          🎁 {good}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+
+                  <div className="event-detail-section">
+                    <h4>Event Created</h4>
+                    <p className="detail-value">🕒 {event && formatDate(event.created_at)}</p>
+                  </div>
+                </div>
+              ) : (
+                // Edit Form
+                <div className="edit-event-form">
+                  <div className="edit-event-header">
+                    <h3>✏️ Edit Event</h3>
+                    <button 
+                      onClick={handleCancelEdit}
+                      className="cancel-button"
+                      type="button"
+                    >
+                      Cancel Edit
+                    </button>
+                  </div>
+
+                  <form onSubmit={handleSubmit}>
+                    {error && <div className="error-message">{error}</div>}
+
+                    <div className="form-group">
+                      <label htmlFor="edit-title">Event Title *</label>
+                      <input
+                        type="text"
+                        id="edit-title"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        required
+                        disabled={saving}
+                        placeholder="Enter event title"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-description">Description *</label>
+                      <textarea
+                        id="edit-description"
+                        value={description}
+                        onChange={(e) => setDescription(e.target.value)}
+                        required
+                        disabled={saving}
+                        placeholder="Describe your event"
+                        rows={4}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-location">Location *</label>
+                      <input
+                        type="text"
+                        id="edit-location"
+                        value={location}
+                        onChange={(e) => setLocation(e.target.value)}
+                        required
+                        disabled={saving}
+                        placeholder="Event location"
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-dateTime">Date & Time *</label>
+                      <input
+                        type="datetime-local"
+                        id="edit-dateTime"
+                        value={dateTime}
+                        onChange={(e) => setDateTime(e.target.value)}
+                        required
+                        disabled={saving}
+                        min={minDate}
+                      />
+                    </div>
+
+                    <div className="form-group">
+                      <label>Goods Provided *</label>
+                      {goodsProvided.map((good, index) => (
+                        <div key={index} className="goods-input-row">
+                          <input
+                            type="text"
+                            value={good}
+                            onChange={(e) => updateGoodField(index, e.target.value)}
+                            placeholder="e.g., Free Pizza, T-shirts"
+                            disabled={saving}
+                          />
+                          {goodsProvided.length > 1 && (
+                            <button
+                              type="button"
+                              onClick={() => removeGoodField(index)}
+                              className="remove-good-button"
+                              disabled={saving}
+                            >
+                              Remove
+                            </button>
+                          )}
+                        </div>
+                      ))}
                       <button
                         type="button"
-                        onClick={() => removeGoodField(index)}
-                        className="remove-good-button"
+                        onClick={addGoodField}
+                        className="add-good-button"
                         disabled={saving}
                       >
-                        Remove
+                        Add Another Item
                       </button>
-                    )}
-                  </div>
-                ))}
-                <button
-                  type="button"
-                  onClick={addGoodField}
-                  className="add-good-button"
-                  disabled={saving}
-                >
-                  Add Another Item
-                </button>
-              </div>
+                    </div>
 
-              <div className="form-actions">
-                <button type="submit" disabled={saving} className="submit-button">
-                  {saving ? 'Updating Event...' : 'Update Event'}
-                </button>
-                <button type="button" onClick={goBack} disabled={saving} className="cancel-button">
-                  Cancel
-                </button>
-              </div>
-            </form>
-              </div>
+                    <div className="form-actions">
+                      <div className="primary-actions">
+                        <button type="submit" disabled={saving} className="submit-button">
+                          {saving ? 'Updating Event...' : 'Update Event'}
+                        </button>
+                        <button type="button" onClick={handleCancelEdit} disabled={saving} className="cancel-button">
+                          Cancel
+                        </button>
+                      </div>
+                      <div className="danger-actions">
+                        <button 
+                          type="button"
+                          onClick={() => setShowDeleteModal(true)}
+                          disabled={saving}
+                          className="delete-button-form"
+                        >
+                          🗑️ Delete Event
+                        </button>
+                      </div>
+                    </div>
+                  </form>
+                </div>
+              )}
             </div>
 
             <div className="metrics-column">

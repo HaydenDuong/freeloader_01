@@ -168,8 +168,19 @@
 
 .form-actions {
   display: flex;
-  gap: 1rem;
+  justify-content: space-between;
+  align-items: flex-end;
   margin-top: 2rem;
+  gap: 1rem;
+}
+
+.primary-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.danger-actions {
+  display: flex;
 }
 
 .submit-button {
@@ -191,6 +202,32 @@
   border-radius: 6px;
   cursor: pointer;
   font-size: 1rem;
+}
+
+.delete-button-form {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+  border: 2px solid transparent;
+}
+
+.delete-button-form:hover:not(:disabled) {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+  border-color: #dc3545;
+}
+
+.delete-button-form:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+  box-shadow: none;
 }
 
 .events-section {
@@ -460,6 +497,17 @@
 
   .form-actions {
     flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .primary-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .danger-actions {
+    align-self: flex-end;
   }
 
   .goods-input-row {
@@ -899,6 +947,115 @@
   min-width: 0;
 }
 
+/* Event Details View Styles */
+.event-details-view {
+  background: white;
+  border-radius: 12px;
+  padding: 2rem;
+  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.1);
+  border: 2px solid #28a745;
+}
+
+.event-details-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 2rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid #e9ecef;
+}
+
+.event-details-header h3 {
+  margin: 0;
+  color: #28a745;
+  font-size: 1.5rem;
+  font-weight: 600;
+}
+
+.details-actions {
+  display: flex;
+  gap: 1rem;
+}
+
+.details-actions .edit-button {
+  background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.details-actions .edit-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(0, 123, 255, 0.3);
+}
+
+.details-actions .delete-button {
+  background: linear-gradient(135deg, #dc3545 0%, #c82333 100%);
+  color: white;
+  border: none;
+  padding: 0.75rem 1.25rem;
+  border-radius: 6px;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 500;
+  transition: all 0.2s ease;
+}
+
+.details-actions .delete-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 4px 12px rgba(220, 53, 69, 0.3);
+}
+
+.event-detail-section {
+  margin-bottom: 1.5rem;
+  padding: 1.25rem;
+  background: #f8f9fa;
+  border-radius: 8px;
+  border-left: 4px solid #28a745;
+}
+
+.event-detail-section h4 {
+  margin: 0 0 0.75rem 0;
+  color: #333;
+  font-size: 1rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.detail-value {
+  margin: 0;
+  color: #555;
+  font-size: 1rem;
+  line-height: 1.5;
+  font-weight: 500;
+}
+
+.goods-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.75rem;
+}
+
+.good-tag {
+  background: linear-gradient(135deg, #28a745 0%, #20c997 100%);
+  color: white;
+  padding: 0.5rem 1rem;
+  border-radius: 20px;
+  font-size: 0.85rem;
+  font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
 /* Responsive adjustments for metrics */
 @media (max-width: 1200px) {
   .edit-page-layout {
@@ -909,5 +1066,57 @@
   .engagement-metrics {
     position: static;
     margin-top: 0;
+  }
+
+  .event-details-header {
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 1rem;
+  }
+
+  .details-actions {
+    width: 100%;
+    justify-content: flex-end;
+  }
+}
+
+@media (max-width: 600px) {
+  .details-actions {
+    flex-direction: column;
+    width: 100%;
+  }
+
+  .details-actions .edit-button {
+    width: 100%;
+    text-align: center;
+  }
+
+  .form-actions {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 1.5rem;
+  }
+
+  .primary-actions {
+    flex-direction: column;
+    gap: 1rem;
+  }
+
+  .danger-actions {
+    align-self: center;
+    margin-top: 1rem;
+  }
+
+  .event-details-view,
+  .edit-event-form {
+    padding: 1.5rem;
+  }
+
+  .goods-display {
+    flex-direction: column;
+  }
+
+  .good-tag {
+    justify-content: center;
   }
 }

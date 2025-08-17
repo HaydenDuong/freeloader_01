@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Event } from '../../types';
 
 interface EventCalendarProps {
@@ -10,132 +11,155 @@ interface EventCalendarProps {
 const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEventClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const navigate = useNavigate();
 
-  // Filter events to show only RSVP'd events
-  const rsvpedEvents = events.filter(event => rsvpEvents.has(event.id));
+  // Show all events instead of filtering by RSVP
+  const allEvents = events;
+  // Compact mode forced ON. If you want to re-enable the toggle, replace the next line with:
+  // const [compact, setCompact] = useState(true);
+  const compact = true; // always compact
 
-  // Get first day of the month and total days
-  const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
-  const lastDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 0);
-  const firstDayWeekday = firstDayOfMonth.getDay();
-  const totalDays = lastDayOfMonth.getDate();
-
-  // Navigation functions
-  const goToPreviousMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() - 1, 1));
+  // Get the start of the current week (Sunday)
+  const getStartOfWeek = (date: Date) => {
+    const start = new Date(date);
+    start.setDate(date.getDate() - date.getDay());
+    start.setHours(0, 0, 0, 0);
+    return start;
   };
 
-  const goToNextMonth = () => {
-    setCurrentDate(new Date(currentDate.getFullYear(), currentDate.getMonth() + 1, 1));
+  // Get the end of the current week (Saturday)
+  const getEndOfWeek = (date: Date) => {
+    const end = new Date(date);
+    end.setDate(date.getDate() - date.getDay() + 6);
+    end.setHours(23, 59, 59, 999);
+    return end;
+  };
+
+  const startOfWeek = getStartOfWeek(currentDate);
+
+  // Navigation functions
+  const goToPreviousWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() - 7);
+    setCurrentDate(newDate);
+  };
+
+  const goToNextWeek = () => {
+    const newDate = new Date(currentDate);
+    newDate.setDate(currentDate.getDate() + 7);
+    setCurrentDate(newDate);
   };
 
   const goToToday = () => {
     setCurrentDate(new Date());
   };
 
-  // Get events for a specific date (only RSVP'd events)
-  const getEventsForDate = (date: number) => {
-    const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
-    return rsvpedEvents.filter(event => {
+  // Generate time slots (full day or compact range around events)
+  const generateTimeSlots = () => {
+    let startHour = 6;
+    let endHour = 23;
+
+    if (compact) {
+      // Events within current week
+      const weekEnd = new Date(startOfWeek);
+      weekEnd.setDate(startOfWeek.getDate() + 7);
+      const weekEvents = allEvents.filter(e => {
+        const d = new Date(e.date_time);
+        return d >= startOfWeek && d < weekEnd;
+      });
+      if (weekEvents.length > 0) {
+        const hours = weekEvents.map(e => new Date(e.date_time).getHours());
+        const min = Math.min(...hours);
+        const max = Math.max(...hours);
+        startHour = Math.max(6, min - 1); // buffer
+        endHour = Math.min(23, max + 1);
+        if (endHour - startHour < 6) {
+          // ensure reasonable height
+          endHour = Math.min(23, startHour + 6);
+        }
+      } else {
+        // default typical daytime window
+        startHour = 8;
+        endHour = 18;
+      }
+    }
+    const slots = [] as { hour: number; display: string; fullHour: number; }[];
+    for (let hour = startHour; hour <= endHour; hour++) {
+      const time12 = hour > 12 ? hour - 12 : hour === 0 ? 12 : hour;
+      const ampm = hour >= 12 ? 'PM' : 'AM';
+      const displayHour = hour === 12 ? 12 : time12;
+      slots.push({ hour, display: `${displayHour} ${ampm}`, fullHour: hour });
+    }
+    return slots;
+  };
+
+  // Get events for a specific date and hour
+  const getEventsForDateTime = (date: Date, hour: number) => {
+    return allEvents.filter(event => {
       const eventDate = new Date(event.date_time);
       return (
-        eventDate.getDate() === targetDate.getDate() &&
-        eventDate.getMonth() === targetDate.getMonth() &&
-        eventDate.getFullYear() === targetDate.getFullYear()
+        eventDate.getDate() === date.getDate() &&
+        eventDate.getMonth() === date.getMonth() &&
+        eventDate.getFullYear() === date.getFullYear() &&
+        eventDate.getHours() === hour
       );
     });
   };
 
   // Check if date is today
-  const isToday = (date: number) => {
+  const isToday = (date: Date) => {
     const today = new Date();
-    const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
     return (
-      targetDate.getDate() === today.getDate() &&
-      targetDate.getMonth() === today.getMonth() &&
-      targetDate.getFullYear() === today.getFullYear()
+      date.getDate() === today.getDate() &&
+      date.getMonth() === today.getMonth() &&
+      date.getFullYear() === today.getFullYear()
     );
   };
 
-  // Generate calendar days
-  const generateCalendarDays = () => {
+  // Generate week days (7 columns)
+  const generateWeekDays = () => {
     const days = [];
-    
-    // Empty cells for days before the first day of the month
-    for (let i = 0; i < firstDayWeekday; i++) {
-      days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
+    for (let i = 0; i < 7; i++) {
+      const currentDay = new Date(startOfWeek);
+      currentDay.setDate(startOfWeek.getDate() + i);
+      days.push(currentDay);
     }
-
-    // Days of the month
-    for (let date = 1; date <= totalDays; date++) {
-      const dayEvents = getEventsForDate(date);
-      const hasEvents = dayEvents.length > 0;
-      const todayClass = isToday(date) ? 'today' : '';
-      const eventsClass = hasEvents ? 'has-events' : '';
-
-      days.push(
-        <div 
-          key={date} 
-          className={`calendar-day ${todayClass} ${eventsClass}`}
-          onClick={() => {
-            if (hasEvents && dayEvents[0]) {
-              setSelectedEvent(dayEvents[0]);
-              onEventClick?.(dayEvents[0]);
-            }
-          }}
-        >
-          <span className="day-number">{date}</span>
-          {hasEvents && (
-            <div className="event-indicators">
-              {dayEvents.slice(0, 3).map((event, index) => (
-                <div 
-                  key={event.id} 
-                  className="event-dot"
-                  title={event.title}
-                  style={{ animationDelay: `${index * 0.1}s` }}
-                />
-              ))}
-              {dayEvents.length > 3 && (
-                <span className="more-events">+{dayEvents.length - 3}</span>
-              )}
-            </div>
-          )}
-        </div>
-      );
-    }
-
     return days;
   };
 
-  const monthNames = [
-    'January', 'February', 'March', 'April', 'May', 'June',
-    'July', 'August', 'September', 'October', 'November', 'December'
-  ];
+  // Format week range for display
+  const getWeekRange = () => {
+    const start = startOfWeek;
+    const end = new Date(startOfWeek);
+    end.setDate(startOfWeek.getDate() + 6);
 
-  const weekDays = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+    const monthNames = [
+      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    if (start.getMonth() === end.getMonth()) {
+      return `${monthNames[start.getMonth()]} ${start.getDate()}-${end.getDate()}, ${start.getFullYear()}`;
+    } else {
+      return `${monthNames[start.getMonth()]} ${start.getDate()} - ${monthNames[end.getMonth()]} ${end.getDate()}, ${start.getFullYear()}`;
+    }
+  };
+
+  const timeSlots = generateTimeSlots();
+  const weekDays = generateWeekDays();
+  const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
 
   return (
-    <div className="event-calendar">
-      {/* Calendar Title */}
-      <div className="calendar-title">
-        <h3>📅 My Event Calendar</h3>
-        <p className="calendar-subtitle">
-          {rsvpedEvents.length === 0 
-            ? "Mark events as 'I'm Interested' to see them here!" 
-            : `Showing ${rsvpedEvents.length} event${rsvpedEvents.length === 1 ? '' : 's'} you're interested in`
-          }
-        </p>
-      </div>
-
+    <div className="event-calendar weekly-view compact"> {/* previously dynamic: {`event-calendar weekly-view ${compact ? 'compact' : ''}` } */}
       {/* Calendar Header */}
       <div className="calendar-header">
-        <button className="nav-button" onClick={goToPreviousMonth} title="Previous Month">
+        <button className="nav-button" onClick={goToPreviousWeek} title="Previous Week">
           ‹
         </button>
-        <div className="month-year">
-          <h3>{monthNames[currentDate.getMonth()]} {currentDate.getFullYear()}</h3>
+        <div className="week-range">
+          <h3>{getWeekRange()}</h3>
         </div>
-        <button className="nav-button" onClick={goToNextMonth} title="Next Month">
+        <button className="nav-button" onClick={goToNextWeek} title="Next Week">
           ›
         </button>
       </div>
@@ -143,20 +167,69 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
       {/* Today Button */}
       <div className="calendar-controls">
         <button className="today-button" onClick={goToToday}>
-          Today
+          This Week
         </button>
+        {/* Full / Compact toggle preserved for future use:
+        <button className="today-button" onClick={() => setCompact(c => !c)}>
+          {compact ? 'Full Day' : 'Compact'}
+        </button>
+        */}
       </div>
 
-      {/* Week Days Header */}
-      <div className="calendar-weekdays">
-        {weekDays.map(day => (
-          <div key={day} className="weekday-header">{day}</div>
-        ))}
-      </div>
+      {/* Weekly Grid */}
+      <div className="weekly-grid">
+        {/* Header Row with Days */}
+        <div className="weekly-header">
+          <div className="time-column-header"></div>
+          {weekDays.map((day, index) => (
+            <div key={index} className={`day-header ${isToday(day) ? 'today' : ''}`}>
+              <div className="day-name">{dayNames[index]}</div>
+              <div className="day-date">{day.getDate()}</div>
+            </div>
+          ))}
+        </div>
 
-      {/* Calendar Grid */}
-      <div className="calendar-grid">
-        {generateCalendarDays()}
+        {/* Time Grid */}
+        <div className="time-grid">
+          {timeSlots.map((timeSlot) => (
+            <div key={timeSlot.hour} className="time-row">
+              {/* Time Label */}
+              <div className="time-label">
+                {timeSlot.display}
+              </div>
+
+              {/* Day Cells */}
+              {weekDays.map((day, dayIndex) => {
+                const eventsAtTime = getEventsForDateTime(day, timeSlot.hour);
+
+                return (
+                  <div key={dayIndex} className="time-cell">
+                    {eventsAtTime.map((event) => (
+                      <div
+                        key={event.id}
+                        className={`event-block ${rsvpEvents.has(event.id) ? 'rsvp-event' : 'regular-event'}`}
+                        onClick={() => {
+                          setSelectedEvent(event);
+                          onEventClick?.(event);
+                        }}
+                        title={`${event.title} - ${event.location}`}
+                      >
+                        <div className="event-time">
+                          {new Date(event.date_time).toLocaleTimeString([], {
+                            hour: '2-digit',
+                            minute: '2-digit'
+                          })}
+                        </div>
+                        <div className="event-title">{event.title}</div>
+                        <div className="event-location">{event.location}</div>
+                      </div>
+                    ))}
+                  </div>
+                );
+              })}
+            </div>
+          ))}
+        </div>
       </div>
 
       {/* Event Details Popup */}
@@ -165,8 +238,11 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
           <div className="event-popup-content">
             <div className="event-popup-header">
               <h4>{selectedEvent.title}</h4>
-              <button 
-                className="close-popup" 
+              {rsvpEvents.has(selectedEvent.id) && (
+                <span className="interest-badge">✓ I'm Interested</span>
+              )}
+              <button
+                className="close-popup"
                 onClick={() => setSelectedEvent(null)}
                 title="Close"
               >
@@ -198,6 +274,19 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
                       ))}
                     </div>
                   </div>
+                </div>
+                <div className="popup-detail-row details-link-row">
+                  <span /> {/* spacer to align right if using grid/flex */}
+                  <a
+                    href={`/student/event/${selectedEvent.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/student/event/${selectedEvent.id}`);
+                    }}
+                    className="details-inline-link"
+                  >
+                    <strong>See more details →</strong>
+                  </a>
                 </div>
               </div>
             </div>

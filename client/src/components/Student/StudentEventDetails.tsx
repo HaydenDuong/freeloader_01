@@ -437,25 +437,25 @@ const StudentEventDetails: React.FC = () => {
                                         }}>
                                             Free Stuff
                                         </h3>
-                                        <div style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                            gap: '0.75rem'
-                                        }}>
+                                        <div className="goods-grid" style={{ marginLeft: 0 }}>
                                             {event.goodsProvided.map((good, index) => (
-                                                <div
+                                                <button
                                                     key={index}
+                                                    type="button"
+                                                    className="good-tag"
                                                     style={{
-                                                        background: 'white',
-                                                        padding: '0.75rem 1rem',
-                                                        borderRadius: '6px',
-                                                        border: '1px solid #e9ecef',
-                                                        fontSize: '0.9rem',
-                                                        color: '#495057'
+                                                        cursor: 'default',
+                                                        border: 'none',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '.35rem',
+                                                        fontWeight: 600,
+                                                        letterSpacing: '.3px'
                                                     }}
+                                                    aria-label={`Free item: ${good}`}
                                                 >
-                                                    &bull; {good}
-                                                </div>
+                                                    {good}
+                                                </button>
                                             ))}
                                         </div>
                                     </div>

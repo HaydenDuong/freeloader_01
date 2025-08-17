@@ -339,10 +339,16 @@
 .event-calendar.weekly-view.compact .weekly-header .day-header { padding:0.38rem 0.2rem; font-size:0.65rem; }
 .event-calendar.weekly-view.compact .weekly-header .day-header.today { box-shadow:0 1px 4px rgba(0,0,0,0.18); }
 .event-calendar.weekly-view.compact .time-label { font-size:0.6rem; padding: 2px 4px 0 0; }
-.event-calendar.weekly-view.compact .event-block { padding:3px 5px 4px; font-size:0.55rem; margin-bottom:3px; line-height:1.05; }
-.event-calendar.weekly-view.compact .event-block .event-time { font-size:0.5rem; letter-spacing:.3px; }
-.event-calendar.weekly-view.compact .event-block .event-title { font-size:0.55rem; }
-.event-calendar.weekly-view.compact .event-block .event-location { font-size:0.47rem; }
+.event-calendar.weekly-view.compact .event-block { 
+  padding:3px 5px 4px; 
+  font-size:1rem; /* increased */
+  margin-bottom:3px; 
+  line-height:1.14; 
+  gap:0; /* no vertical gap */
+}
+.event-calendar.weekly-view.compact .event-block .event-time { font-size:0.6rem; letter-spacing:.35px; }
+.event-calendar.weekly-view.compact .event-block .event-title { font-size:0.74rem; }
+.event-calendar.weekly-view.compact .event-block .event-location { font-size:0.66rem; }
 .event-calendar.weekly-view.compact .today-button { padding:0.35rem 0.75rem; font-size:0.65rem; }
 
 /* Grid wrappers */
@@ -417,6 +423,51 @@
 .interest-badge { background:linear-gradient(135deg,#28a745,#218838); color:#fff; font-size:0.55rem; padding:2px 6px; border-radius:12px; font-weight:600; box-shadow:0 2px 6px rgba(40,167,69,0.35); }
 .popup-detail-row { display:flex; gap:0.4rem; font-size:0.7rem; margin:4px 0; align-items:flex-start; }
 .popup-good-tag { background:#edf2f7; padding:2px 6px; border-radius:12px; font-size:0.55rem; margin:2px; display:inline-block; }
+.details-button {
+  background: linear-gradient(135deg,var(--cal-accent-start),var(--cal-accent-end));
+  color:#fff;
+  border:none;
+  padding:0.5rem 0.9rem;
+  border-radius:6px;
+  font-size:0.65rem;
+  font-weight:600;
+  cursor:pointer;
+  box-shadow:0 2px 6px rgba(102,126,234,0.35);
+  transition:filter .15s, transform .15s;
+}
+.details-button:hover { filter:brightness(1.08); transform:translateY(-2px); }
+
+/* Link-style variant (popup bottom-right) */
+.details-link-row { justify-content:flex-end; width:100%; }
+.details-inline-link {
+  margin-left:auto;
+  font-size:0.62rem;
+  font-weight:600;
+  text-decoration:none;
+  color:#1e3a8a; /* default readable blue */
+  position: relative;
+  padding: 2px 0;
+  transition:color .2s ease, filter .2s ease;
+}
+.details-inline-link:after {
+  content:"";
+  position:absolute;
+  left:0; right:0; bottom:0;
+  height:2px;
+  background: linear-gradient(90deg,var(--cal-accent-start),var(--cal-accent-end));
+  transform:scaleX(.4);
+  transform-origin:left;
+  transition:transform .25s ease;
+  border-radius:2px;
+}
+.details-inline-link:hover:after { transform:scaleX(1); }
+.details-inline-link:hover {
+  background: linear-gradient(90deg,var(--cal-accent-start),var(--cal-accent-end));
+  -webkit-background-clip:text;
+  background-clip:text;
+  color:transparent;
+  filter:brightness(1.1);
+}
 
 @media (max-width: 900px) {
   .weekly-header, .time-row { grid-template-columns: 50px repeat(7, 1fr); }
@@ -447,14 +498,26 @@
 }
 
 /* RSVP Button Styles */
-.event-actions {
-  margin-top: 1rem;
-  padding-top: 1rem;
-  border-top: 1px solid #e9ecef;
-  display: flex;
-  justify-content: flex-end;
+.event-block { 
+  background: linear-gradient(135deg,var(--cal-accent-fade),var(--cal-accent-fade-strong)); 
+  border: 1px solid rgba(102,126,234,0.45); 
+  border-left:4px solid var(--cal-accent-start); 
+  border-radius:8px; 
+  padding:5px 7px 6px; 
+  font-size:0.72rem; /* increased */
+  line-height:1.18; 
+  margin-bottom:5px; 
+  cursor:pointer; 
+  overflow:hidden; 
+  display:flex; 
+  flex-direction:column; 
+  gap:2px; /* slightly tighter */
+  transition: box-shadow .15s, transform .15s, border-color .2s;
 }
-
+.event-block .event-time { font-weight:600; font-size:0.65rem; color:var(--cal-text-dark); letter-spacing:.55px; }
+.event-block .event-title { font-weight:600; color:var(--cal-text-dark); font-size:0.82rem; }
+.event-block .event-location { color:var(--cal-text-mid); font-size:0.7rem; }
+/* RSVP Button Styles */
 .rsvp-button {
   background: linear-gradient(135deg, #007bff 0%, #0056b3 100%);
   color: white;

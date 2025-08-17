@@ -1,4 +1,5 @@
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Event } from '../../types';
 
 interface EventCalendarProps {
@@ -10,6 +11,7 @@ interface EventCalendarProps {
 const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEventClick }) => {
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
+  const navigate = useNavigate();
 
   // Show all events instead of filtering by RSVP
   const allEvents = events;
@@ -272,6 +274,19 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
                       ))}
                     </div>
                   </div>
+                </div>
+                <div className="popup-detail-row details-link-row">
+                  <span /> {/* spacer to align right if using grid/flex */}
+                  <a
+                    href={`/student/event/${selectedEvent.id}`}
+                    onClick={(e) => {
+                      e.preventDefault();
+                      navigate(`/student/event/${selectedEvent.id}`);
+                    }}
+                    className="details-inline-link"
+                  >
+                    <strong>See more details →</strong>
+                  </a>
                 </div>
               </div>
             </div>

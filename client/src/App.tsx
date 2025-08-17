@@ -11,6 +11,7 @@ import StudentDashboard from './components/Student/StudentDashboard';
 import SavedEvents from './components/Student/SavedEvents';
 import EditProfile from './components/Student/EditProfile';
 import StudentEventDetails from './components/Student/StudentEventDetails';
+import LandingPage from './components/LandingPage';
 import './App.css';
 
 function App() {
@@ -87,9 +88,11 @@ function App() {
               }
             />
 
+            {/* Landing page */}
+            <Route path="/" element={<LandingPage />} />
+
             {/* Default redirect */}
-            <Route path="/" element={<Navigate to="/login" replace />} />
-            <Route path="*" element={<Navigate to="/login" replace />} />
+            <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
         </div>
       </Router>

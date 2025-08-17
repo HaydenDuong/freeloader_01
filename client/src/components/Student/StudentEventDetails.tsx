@@ -320,8 +320,8 @@ const StudentEventDetails: React.FC = () => {
 
                                         <button
                                             style={{
-                                                background: '#007bff',
-                                                border: '1px solid #007bff',
+                                                background: '#4285f4',
+                                                border: '1px solid #4285f4',
                                                 color: 'white',
                                                 padding: '1rem 1rem',
                                                 borderRadius: '6px',
@@ -330,19 +330,33 @@ const StudentEventDetails: React.FC = () => {
                                                 cursor: 'pointer',
                                                 minWidth: '200px',
                                                 textAlign: 'center',
-                                                transition: 'all 0.2s ease'
+                                                transition: 'all 0.2s ease',
+                                                display: 'flex',
+                                                alignItems: 'center',
+                                                justifyContent: 'center',
+                                                gap: '0.5rem'
                                             }}
                                             onClick={() => window.open(createGoogleCalendarUrl(event), '_blank')}
                                             onMouseOver={(e) => {
                                                 e.currentTarget.style.transform = 'translateY(-1px)';
                                                 e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                                                e.currentTarget.style.background = '#3367d6';
                                             }}
                                             onMouseOut={(e) => {
                                                 e.currentTarget.style.transform = 'translateY(0)';
                                                 e.currentTarget.style.boxShadow = 'none';
+                                                e.currentTarget.style.background = '#4285f4';
                                             }}
                                         >
-                                            Add to Calendar
+                                            <svg
+                                                width="18"
+                                                height="18"
+                                                viewBox="0 0 24 24"
+                                                fill="currentColor"
+                                            >
+                                                <path d="M19 3h-1V1h-2v2H8V1H6v2H5c-1.11 0-1.99.9-1.99 2L3 19c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V5c0-1.1-.9-2-2-2zm0 16H5V8h14v11zM7 10h5v5H7z" />
+                                            </svg>
+                                            Google Calendar
                                         </button>
                                     </div>
                                 </div>

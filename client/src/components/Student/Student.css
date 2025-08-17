@@ -334,11 +334,16 @@
 .event-calendar.weekly-view .today-button:hover { filter:brightness(1.07); }
 
 /* Compact mode */
-.event-calendar.weekly-view.compact .time-row { min-height: 42px; }
-.event-calendar.weekly-view.compact .event-block { padding:4px 6px 5px; font-size:0.6rem; margin-bottom:4px; }
-.event-calendar.weekly-view.compact .event-block .event-time { font-size:0.55rem; }
-.event-calendar.weekly-view.compact .time-grid { max-height: 500px; }
-.event-calendar.weekly-view.compact .weekly-header .day-header { padding:0.45rem 0.25rem; }
+.event-calendar.weekly-view.compact .time-row { min-height: 34px; }
+.event-calendar.weekly-view.compact .time-grid { max-height: 420px; }
+.event-calendar.weekly-view.compact .weekly-header .day-header { padding:0.38rem 0.2rem; font-size:0.65rem; }
+.event-calendar.weekly-view.compact .weekly-header .day-header.today { box-shadow:0 1px 4px rgba(0,0,0,0.18); }
+.event-calendar.weekly-view.compact .time-label { font-size:0.6rem; padding: 2px 4px 0 0; }
+.event-calendar.weekly-view.compact .event-block { padding:3px 5px 4px; font-size:0.55rem; margin-bottom:3px; line-height:1.05; }
+.event-calendar.weekly-view.compact .event-block .event-time { font-size:0.5rem; letter-spacing:.3px; }
+.event-calendar.weekly-view.compact .event-block .event-title { font-size:0.55rem; }
+.event-calendar.weekly-view.compact .event-block .event-location { font-size:0.47rem; }
+.event-calendar.weekly-view.compact .today-button { padding:0.35rem 0.75rem; font-size:0.65rem; }
 
 /* Grid wrappers */
 .weekly-grid { width: 100%; }

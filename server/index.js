@@ -7,6 +7,7 @@ const authRoutes = require('./routes/auth');
 const eventRoutes = require('./routes/events');
 const userRoutes = require('./routes/user');
 const engagementRoutes = require('./routes/engagement');
+const notificationRoutes = require('./routes/notifications');
 const { initializeDatabase } = require('./database/db');
 
 const app = express();
@@ -24,6 +25,7 @@ app.use('/api/auth', authRoutes);
 app.use('/api/events', eventRoutes);
 app.use('/api/user', userRoutes);
 app.use('/api/engagement', engagementRoutes);
+app.use('/api/notifications', notificationRoutes);
 
 // Serve static files from React build in production
 if (process.env.NODE_ENV === 'production') {

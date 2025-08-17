@@ -90,6 +90,23 @@ const initializeDatabase = () => {
       FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE,
       UNIQUE(event_id, student_id)
     )`);
+
+    // Create notifications table (students get notified of new events matching interests)
+    db.run(`CREATE TABLE IF NOT EXISTS notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      event_id INTEGER NOT NULL,
+      message TEXT NOT NULL,
+      matched_tags TEXT DEFAULT '[]',
+      is_read INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+      FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
+      UNIQUE(user_id, event_id)
+    )`);
+
+    // Helpful indexes
+    db.run(`CREATE INDEX IF NOT EXISTS idx_notifications_user_read ON notifications(user_id, is_read)`);
   });
 };
 

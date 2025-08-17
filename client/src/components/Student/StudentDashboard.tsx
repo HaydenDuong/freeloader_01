@@ -6,6 +6,7 @@ import { Event } from '../../types';
 import StudentEventList from './StudentEventList';
 import EventCalendar from './EventCalendar';
 import './Student.css';
+import NotificationBell from './NotificationBell';
 
 const StudentDashboard: React.FC = () => {
   const { user, logout } = useAuth();
@@ -57,7 +58,7 @@ const StudentDashboard: React.FC = () => {
   const handleRsvpToggle = async (eventId: number) => {
     const isCurrentlyRsvped = rsvpEvents.has(eventId);
     const newRsvpEvents = new Set(rsvpEvents);
-    
+
     try {
       if (isCurrentlyRsvped) {
         // Remove save
@@ -68,7 +69,7 @@ const StudentDashboard: React.FC = () => {
         await engagementAPI.trackSave(eventId);
         newRsvpEvents.add(eventId);
       }
-      
+
       setRsvpEvents(newRsvpEvents);
       // Keep localStorage in sync for immediate UI feedback
       localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
@@ -90,6 +91,7 @@ const StudentDashboard: React.FC = () => {
           <h1>Student Dashboard</h1>
           <div className="header-actions">
             <span className="user-email">Welcome, {user?.email}</span>
+            <NotificationBell />
             <Link to="/student/edit-profile" className="edit-profile-button">
               Edit Profile
             </Link>
@@ -130,14 +132,14 @@ const StudentDashboard: React.FC = () => {
           ) : events.length === 0 ? (
             <div className="no-events">
               <h2>No Events Available</h2>
-              <p>Check back later for exciting events with free stuff! 🎉</p>
+              <p>Check back later for exciting events with free stuff!</p>
             </div>
           ) : (
             <div className="events-sections">
               {/* Calendar Section */}
               {showCalendar && (
-                <EventCalendar 
-                  events={events} 
+                <EventCalendar
+                  events={events}
                   rsvpEvents={rsvpEvents}
                   onEventClick={(event) => console.log('Event clicked:', event)}
                 />
@@ -146,16 +148,16 @@ const StudentDashboard: React.FC = () => {
               {upcomingEvents.length > 0 && (
                 <div className="events-section">
                   <div className="section-header">
-                    <h2>🚀 Upcoming Events ({upcomingEvents.length})</h2>
-                    <button 
+                    <h2>Upcoming Events ({upcomingEvents.length})</h2>
+                    <button
                       className="calendar-toggle-button"
                       onClick={handleCalendarToggle}
                     >
-                      📅 {showCalendar ? 'Hide Calendar' : 'Calendar View'}
+                      {showCalendar ? 'Hide Calendar' : 'Calendar View'}
                     </button>
                   </div>
-                  <StudentEventList 
-                    events={upcomingEvents} 
+                  <StudentEventList
+                    events={upcomingEvents}
                     rsvpEvents={rsvpEvents}
                     onRsvpToggle={handleRsvpToggle}
                   />
@@ -164,12 +166,12 @@ const StudentDashboard: React.FC = () => {
 
               {pastEvents.length > 0 && (
                 <div className="events-section">
-                  <h2>📅 Past Events ({pastEvents.length})</h2>
-                  <StudentEventList 
-                    events={pastEvents} 
+                  <h2>Past Events ({pastEvents.length})</h2>
+                  <StudentEventList
+                    events={pastEvents}
                     rsvpEvents={rsvpEvents}
                     onRsvpToggle={handleRsvpToggle}
-                    isPast={true} 
+                    isPast={true}
                   />
                 </div>
               )}

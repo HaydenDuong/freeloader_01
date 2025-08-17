@@ -26,3 +26,22 @@ export interface AuthResponse {
 export interface EventsResponse {
   events: Event[];
 }
+
+export interface Notification {
+  id: number;
+  event_id: number;
+  message: string;
+  matched_tags: string[];
+  is_read: boolean;
+  created_at: string;
+  event: {
+    id: number;
+    title: string;
+    date_time: string;
+    tags: string[];
+  };
+}
+
+export interface NotificationsResponse {
+  notifications: Notification[];
+}

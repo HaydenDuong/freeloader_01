@@ -27,11 +27,37 @@ router.post('/', authenticateToken, requireRole('organizer'), (req, res) => {
           console.error('Database error:', err);
           return res.status(500).json({ message: 'Error creating event' });
         }
+        const newEventId = this.lastID;
+
+        // Notify interested students (match any overlapping tag)
+        if (tags.length > 0) {
+          const placeholders = tags.map(() => '?').join(',');
+          db.all(
+            `SELECT DISTINCT si.user_id, GROUP_CONCAT(DISTINCT si.tag) as matched
+             FROM student_interests si
+             WHERE si.tag IN (${placeholders})
+             GROUP BY si.user_id`,
+            tags,
+            (matchErr, rows) => {
+              if (matchErr) {
+                console.error('Error finding interested students:', matchErr);
+              } else if (rows && rows.length > 0) {
+                const insertStmt = db.prepare('INSERT OR IGNORE INTO notifications (user_id, event_id, message, matched_tags) VALUES (?, ?, ?, ?)');
+                rows.forEach(r => {
+                  const matchedTagsArr = (r.matched || '').split(',').filter(Boolean);
+                  const message = `New event "${title}" matches your interests: ${matchedTagsArr.join(', ')}`;
+                  insertStmt.run(r.user_id, newEventId, message, JSON.stringify(matchedTagsArr));
+                });
+                insertStmt.finalize();
+              }
+            }
+          );
+        }
 
         res.status(201).json({
           message: 'Event created successfully',
           event: {
-            id: this.lastID,
+            id: newEventId,
             title,
             description,
             location,

@@ -64,7 +64,7 @@ const EventList: React.FC<EventListProps> = ({ events }) => {
               <small>Created on {formatDate(event.created_at)}</small>
             </div>
             <div className="event-click-hint">
-              <span className="click-hint">Click to edit →</span>
+              <span className="click-hint">Click to view →</span>
             </div>
           </div>
         </div>

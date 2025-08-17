@@ -109,6 +109,13 @@
   font-weight: 500;
 }
 
+.form-help-text {
+  font-size: 0.8rem;
+  color: #6c757d;
+  margin-top: 0.25rem;
+  line-height: 1.4;
+}
+
 .form-group input,
 .form-group textarea,
 .form-group select {
@@ -1051,6 +1058,27 @@
   border-radius: 20px;
   font-size: 0.85rem;
   font-weight: 500;
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+}
+
+/* Tags Display */
+.tags-display {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-top: 0.5rem;
+}
+
+.tag-display {
+  background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+  color: white;
+  padding: 0.4rem 0.8rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
   display: inline-flex;
   align-items: center;
   gap: 0.25rem;

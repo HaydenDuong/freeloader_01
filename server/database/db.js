@@ -25,10 +25,40 @@ const initializeDatabase = () => {
       location TEXT NOT NULL,
       date_time DATETIME NOT NULL,
       goods_provided TEXT NOT NULL,
+      tags TEXT DEFAULT '[]',
       organizer_id INTEGER NOT NULL,
       created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
       FOREIGN KEY (organizer_id) REFERENCES users (id)
     )`);
+
+    // Migration: Add tags column if it doesn't exist
+    db.run(`PRAGMA table_info(events)`, (err, rows) => {
+      if (err) {
+        console.error('Error checking table structure:', err);
+        return;
+      }
+      
+      // Check if tags column exists
+      db.all(`PRAGMA table_info(events)`, (err, columns) => {
+        if (err) {
+          console.error('Error checking columns:', err);
+          return;
+        }
+        
+        const hasTagsColumn = columns.some(col => col.name === 'tags');
+        
+        if (!hasTagsColumn) {
+          console.log('Adding tags column to events table...');
+          db.run(`ALTER TABLE events ADD COLUMN tags TEXT DEFAULT '[]'`, (err) => {
+            if (err) {
+              console.error('Error adding tags column:', err);
+            } else {
+              console.log('Successfully added tags column to events table');
+            }
+          });
+        }
+      });
+    });
 
     // Create student_interests table
     db.run(`CREATE TABLE IF NOT EXISTS student_interests (
@@ -60,6 +90,23 @@ const initializeDatabase = () => {
       FOREIGN KEY (student_id) REFERENCES users (id) ON DELETE CASCADE,
       UNIQUE(event_id, student_id)
     )`);
+
+    // Create notifications table (students get notified of new events matching interests)
+    db.run(`CREATE TABLE IF NOT EXISTS notifications (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      user_id INTEGER NOT NULL,
+      event_id INTEGER NOT NULL,
+      message TEXT NOT NULL,
+      matched_tags TEXT DEFAULT '[]',
+      is_read INTEGER DEFAULT 0,
+      created_at DATETIME DEFAULT CURRENT_TIMESTAMP,
+      FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE,
+      FOREIGN KEY (event_id) REFERENCES events (id) ON DELETE CASCADE,
+      UNIQUE(user_id, event_id)
+    )`);
+
+    // Helpful indexes
+    db.run(`CREATE INDEX IF NOT EXISTS idx_notifications_user_read ON notifications(user_id, is_read)`);
   });
 };
 

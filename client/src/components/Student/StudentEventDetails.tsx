@@ -482,6 +482,51 @@ const StudentEventDetails: React.FC = () => {
                                     </div>
                                 )}
 
+                                {/* Tags section */}
+                                {event.tags && event.tags.length > 0 && (
+                                    <div style={{
+                                        background: '#f8f9fa',
+                                        padding: '1.5rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        <h3 style={{
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            color: '#2c3e50',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            🏷️ Event Tags
+                                        </h3>
+                                        <div className="tags-grid" style={{ 
+                                            display: 'flex', 
+                                            flexWrap: 'wrap', 
+                                            gap: '0.5rem',
+                                            marginLeft: 0 
+                                        }}>
+                                            {event.tags.map((tag, index) => (
+                                                <span
+                                                    key={index}
+                                                    className="event-tag"
+                                                    style={{
+                                                        background: 'linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%)',
+                                                        color: 'white',
+                                                        padding: '0.4rem 0.8rem',
+                                                        borderRadius: '15px',
+                                                        fontSize: '0.8rem',
+                                                        fontWeight: '500',
+                                                        display: 'inline-flex',
+                                                        alignItems: 'center',
+                                                        gap: '0.25rem'
+                                                    }}
+                                                >
+                                                    {tag}
+                                                </span>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
+
                                 {/* Location Section */}
                                 <div style={{
                                     background: '#f8f9fa',

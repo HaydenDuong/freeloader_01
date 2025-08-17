@@ -30,6 +30,22 @@
   align-items: center;
   gap: 1rem;
 }
+.notification-bell-wrapper { position: relative; }
+.notification-bell { position: relative; background: #fff; border: 1px solid #ddd; padding: 6px 10px; border-radius: 6px; cursor: pointer; font-size: 0.85rem; font-weight: 600; }
+.notification-bell:hover { background: #f2f2f7; }
+.notification-badge { position: absolute; top: -6px; right: -6px; background: #dc3545; color: #fff; border-radius: 12px; padding: 0 6px; font-size: 0.65rem; line-height: 18px; min-width: 18px; text-align: center; font-weight: 700; box-shadow: 0 0 0 2px #fff; }
+.notification-dropdown { position: absolute; right: 0; top: 42px; width: 360px; max-height: 420px; background: #fff; border: 1px solid #e1e4e8; border-radius: 10px; box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15); display: flex; flex-direction: column; z-index: 50; overflow: hidden; }
+.notification-header { display: flex; justify-content: space-between; align-items: center; padding: 10px 14px; background: linear-gradient(135deg, #4a90e2, #357abd); color: #fff; font-weight: 600; font-size: 0.9rem; }
+.mark-read-btn { background: rgba(255, 255, 255, 0.2); border: none; color: #fff; padding: 4px 10px; border-radius: 20px; font-size: 0.7rem; cursor: pointer; }
+.mark-read-btn:hover { background: rgba(255, 255, 255, 0.35); }
+.notification-empty { padding: 30px 20px; text-align: center; font-size: 0.8rem; color: #666; }
+.notification-list { list-style: none; margin: 0; padding: 0; overflow-y: auto; }
+.notification-list li { padding: 10px 14px 12px; border-bottom: 1px solid #f1f1f4; display: flex; flex-direction: column; gap: 6px; font-size: 0.75rem; }
+.notification-list li.unread { background: #f0f7ff; }
+.notification-list li.unread::before { content: ""; position: absolute; left: 0; width: 3px; top: 0; bottom: 0; background: #2f80ed; }
+.notif-message { font-weight: 600; color: #222; line-height: 1.3; }
+.notif-meta { display: flex; flex-wrap: wrap; gap: 8px; font-size: 0.65rem; color: #666; }
+.notif-tags { background: #e8f3ff; color: #2f80ed; padding: 2px 6px; border-radius: 12px; font-weight: 600; }
 
 .user-email {
   color: #666;
@@ -495,6 +511,27 @@
   font-size: 0.85rem;
   font-weight: 500;
   box-shadow: 0 2px 4px rgba(102, 126, 234, 0.3);
+}
+
+/* Tags styling */
+.tags-grid {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.5rem;
+  margin-left: 1.5rem;
+}
+
+.event-tag {
+  background: linear-gradient(135deg, #6f42c1 0%, #e83e8c 100%);
+  color: white;
+  padding: 0.25rem 0.6rem;
+  border-radius: 15px;
+  font-size: 0.8rem;
+  font-weight: 500;
+  box-shadow: 0 2px 4px rgba(111, 66, 193, 0.3);
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
 }
 
 /* RSVP Button Styles */

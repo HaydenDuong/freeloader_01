@@ -19,8 +19,8 @@ const LandingPage = () => {
         <h1>Discover Events. Get Free Stuff.</h1>
         <p>Connecting students with events offering free goods and services.</p>
         <div className="cta-buttons">
-          <a href="/register" className="cta-primary">I'm a Student</a>
-          <a href="/register" className="cta-secondary">I'm an Organizer</a>
+          <a href="/register?role=student" className="cta-primary">I'm a Student</a>
+          <a href="/register?role=organizer" className="cta-secondary">I'm an Organizer</a>
         </div>
       </section>
 

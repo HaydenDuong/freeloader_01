@@ -1,0 +1,29 @@
+/* Global site footer */
+.site-footer {
+  margin-top: auto; /* push to bottom */
+  background:#333;
+  color:#fff;
+  padding: 1.5rem 2rem;
+  text-align:center;
+  font-size: 0.9rem;
+  border-top: 1px solid #222;
+}
+
+.site-footer a {
+  color:#fff;
+  text-decoration:none;
+  margin: 0 0.75rem;
+  font-weight:500;
+}
+
+.site-footer a:hover {
+  text-decoration:underline;
+}
+
+.site-footer__links {
+  margin-bottom:0.5rem;
+}
+
+@media (max-width:600px) {
+  .site-footer__links a { display:inline-block; margin:0.25rem 0.5rem; }
+}

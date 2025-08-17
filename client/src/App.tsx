@@ -13,6 +13,7 @@ import SavedEvents from './components/Student/SavedEvents';
 import EditProfile from './components/Student/EditProfile';
 import StudentEventDetails from './components/Student/StudentEventDetails';
 import LandingPage from './components/LandingPage';
+import SiteFooter from './components/SiteFooter';
 import './App.css';
 
 // Simple top logo bar shown on all pages except the landing page ("/")
@@ -115,6 +116,7 @@ function App() {
             {/* Default redirect */}
             <Route path="*" element={<Navigate to="/" replace />} />
           </Routes>
+          <SiteFooter />
         </div>
       </Router>
     </AuthProvider>

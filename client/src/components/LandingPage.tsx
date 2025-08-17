@@ -77,12 +77,6 @@ const LandingPage = () => {
         </div>
       </section>
 
-      {/* Footer */}
-      <footer className="landing-footer">
-        <a href="/about">About Us</a>
-        <a href="/contact">Contact</a>
-        <a href="/privacy">Privacy Policy</a>
-      </footer>
     </div>
   );
 };

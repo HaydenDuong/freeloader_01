@@ -134,15 +134,4 @@ a.cta-primary {
   background-color: #f4f4f4;
 }
 
-.landing-footer {
-  text-align: center;
-  padding: 2rem;
-  background-color: #333;
-  color: #fff;
-}
 
-.landing-footer a {
-  color: #fff;
-  text-decoration: none;
-  margin: 0 1rem;
-}

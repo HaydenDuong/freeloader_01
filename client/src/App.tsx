@@ -1,5 +1,5 @@
 import React from 'react';
-import { BrowserRouter as Router, Routes, Route, Navigate, useLocation } from 'react-router-dom';
+import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { AuthProvider } from './context/AuthContext';
 import ProtectedRoute from './components/ProtectedRoute';
 import PublicRoute from './components/PublicRoute';
@@ -14,18 +14,10 @@ import EditProfile from './components/Student/EditProfile';
 import StudentEventDetails from './components/Student/StudentEventDetails';
 import LandingPage from './components/LandingPage';
 import SiteFooter from './components/SiteFooter';
+import GlobalLogoBar from './components/GlobalLogoBar';
 import './App.css';
 
-// Simple top logo bar shown on all pages except the landing page ("/")
-const GlobalLogoBar: React.FC = () => {
-  const location = useLocation();
-  if (location.pathname === '/') return null; // Landing page already has its own header with logo
-  return (
-    <div className="app-logo-bar">
-      <a href="/" className="logo">FreeLoader</a>
-    </div>
-  );
-};
+// GlobalLogoBar moved to components/GlobalLogoBar.tsx
 
 function App() {
   return (

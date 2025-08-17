@@ -88,6 +88,20 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
                     ))}
                   </div>
                 </div>
+
+                {event.tags && event.tags.length > 0 && (
+                  <div className="detail-row">
+                    <span className="detail-icon">🏷️</span>
+                    <strong>Tags:</strong>
+                    <div className="tags-grid">
+                      {event.tags.map((tag, index) => (
+                        <span key={index} className="event-tag">
+                          {tag}
+                        </span>
+                      ))}
+                    </div>
+                  </div>
+                )}
               </div>
 
               {/* RSVP Button */}

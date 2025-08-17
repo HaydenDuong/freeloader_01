@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
 import LocationAutocomplete from '../LocationAutocomplete';
+import TagSelector from '../TagSelector';
 
 interface CreateEventFormProps {
   onEventCreated: (event: Event) => void;
@@ -14,6 +15,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
   const [location, setLocation] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [goodsProvided, setGoodsProvided] = useState<string[]>(['']);
+  const [tags, setTags] = useState<string[]>([]);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -52,6 +54,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
         location,
         dateTime,
         goodsProvided: filteredGoods,
+        tags,
       });
 
       onEventCreated(response.event);
@@ -62,6 +65,7 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
       setLocation('');
       setDateTime('');
       setGoodsProvided(['']);
+      setTags([]);
     } catch (err: any) {
       setError(err.response?.data?.message || 'Failed to create event');
     } finally {
@@ -161,6 +165,19 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
           >
             Add Another Item
           </button>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="tags">Tags (Optional)</label>
+          <TagSelector
+            selectedTags={tags}
+            onChange={setTags}
+            disabled={loading}
+            placeholder="Add tags to help students discover your event..."
+          />
+          <small className="form-help-text">
+            Tags help students find events that match their interests. Select relevant categories from Goods, Topics, Career, and Entertainment.
+          </small>
         </div>
 
         <div className="form-actions">

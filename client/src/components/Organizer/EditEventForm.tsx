@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
+import TagSelector from '../TagSelector';
 
 interface EditEventFormProps {
   event: Event;
@@ -35,6 +36,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
   const [location, setLocation] = useState(event.location || '');
   const [dateTime, setDateTime] = useState(formatDateTimeForInput(event.date_time));
   const [goodsProvided, setGoodsProvided] = useState<string[]>(event.goodsProvided ? [...event.goodsProvided] : ['']);
+  const [tags, setTags] = useState<string[]>(event.tags || []);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
@@ -73,6 +75,7 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
         location,
         dateTime,
         goodsProvided: filteredGoods,
+        tags,
       });
 
       onEventUpdated(response.event);
@@ -182,6 +185,19 @@ const EditEventForm: React.FC<EditEventFormProps> = ({ event, onEventUpdated, on
           >
             Add Another Item
           </button>
+        </div>
+
+        <div className="form-group">
+          <label htmlFor="edit-tags">Tags (Optional)</label>
+          <TagSelector
+            selectedTags={tags}
+            onChange={setTags}
+            disabled={loading}
+            placeholder="Add tags to help students discover your event..."
+          />
+          <small className="form-help-text">
+            Tags help students find events that match their interests. Select relevant categories from Goods, Topics, Career, and Entertainment.
+          </small>
         </div>
 
         <div className="form-actions">

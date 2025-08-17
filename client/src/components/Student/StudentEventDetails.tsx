@@ -14,6 +14,26 @@ const StudentEventDetails: React.FC = () => {
     const [error, setError] = useState('');
     const [rsvpEvents, setRsvpEvents] = useState<Set<number>>(new Set());
 
+    const createGoogleCalendarUrl = (event: Event) => {
+        const startDate = new Date(event.date_time);
+        const endDate = new Date(startDate.getTime() + (2 * 60 * 60 * 1000)); // Assume 2-hour duration
+
+        const formatDate = (date: Date) => {
+            return date.toISOString().replace(/[-:]/g, '').split('.')[0] + 'Z';
+        };
+
+        const params = new URLSearchParams({
+            action: 'TEMPLATE',
+            text: event.title,
+            dates: `${formatDate(startDate)}/${formatDate(endDate)}`,
+            details: event.description,
+            location: event.location,
+            ctz: Intl.DateTimeFormat().resolvedOptions().timeZone
+        });
+
+        return `https://calendar.google.com/calendar/render?${params.toString()}`;
+    };
+
     useEffect(() => {
         const fetchEvent = async () => {
             try {
@@ -275,12 +295,12 @@ const StudentEventDetails: React.FC = () => {
                                                     background: isRsvped ? '#28a745' : '#dc3545',
                                                     color: 'white',
                                                     border: 'none',
-                                                    padding: '1rem 2rem',
+                                                    padding: '1rem 1rem',
                                                     borderRadius: '6px',
                                                     fontSize: '1rem',
                                                     fontWeight: '600',
                                                     cursor: 'pointer',
-                                                    minWidth: '160px',
+                                                    minWidth: '200px',
                                                     textAlign: 'center',
                                                     transition: 'all 0.2s ease'
                                                 }}
@@ -297,32 +317,33 @@ const StudentEventDetails: React.FC = () => {
                                             </button>
                                         )}
 
-                                        <div style={{
-                                            textAlign: 'right',
-                                            fontSize: '0.9rem',
-                                            color: '#6c757d'
-                                        }}>
-                                            <button style={{
+
+                                        <button
+                                            style={{
                                                 background: '#007bff',
                                                 border: '1px solid #007bff',
                                                 color: 'white',
-                                                padding: '0.5rem 1rem',
-                                                borderRadius: '4px',
-                                                fontSize: '0.85rem',
-                                                cursor: 'pointer'
+                                                padding: '1rem 1rem',
+                                                borderRadius: '6px',
+                                                fontSize: '1rem',
+                                                fontWeight: '600',
+                                                cursor: 'pointer',
+                                                minWidth: '200px',
+                                                textAlign: 'center',
+                                                transition: 'all 0.2s ease'
                                             }}
-                                                onMouseOver={(e) => {
-                                                    e.currentTarget.style.transform = 'translateY(-1px)';
-                                                    e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
-                                                }}
-                                                onMouseOut={(e) => {
-                                                    e.currentTarget.style.transform = 'translateY(0)';
-                                                    e.currentTarget.style.boxShadow = 'none';
-                                                }}
-                                            >
-                                                Sync to Calendar
-                                            </button>
-                                        </div>
+                                            onClick={() => window.open(createGoogleCalendarUrl(event), '_blank')}
+                                            onMouseOver={(e) => {
+                                                e.currentTarget.style.transform = 'translateY(-1px)';
+                                                e.currentTarget.style.boxShadow = '0 4px 12px rgba(0,0,0,0.2)';
+                                            }}
+                                            onMouseOut={(e) => {
+                                                e.currentTarget.style.transform = 'translateY(0)';
+                                                e.currentTarget.style.boxShadow = 'none';
+                                            }}
+                                        >
+                                            Add to Calendar
+                                        </button>
                                     </div>
                                 </div>
                             </div>

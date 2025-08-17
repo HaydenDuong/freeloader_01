@@ -5,6 +5,7 @@ import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import EventEngagementMetrics from './EventEngagementMetrics';
+import LocationAutocomplete from '../LocationAutocomplete';
 import './Organizer.css';
 
 const OrganizerEventEdit: React.FC = () => {
@@ -28,6 +29,7 @@ const OrganizerEventEdit: React.FC = () => {
 
   useEffect(() => {
     fetchEvent();
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [id]);
 
   const fetchEvent = async () => {
@@ -377,14 +379,13 @@ const OrganizerEventEdit: React.FC = () => {
 
                     <div className="form-group">
                       <label htmlFor="edit-location">Location *</label>
-                      <input
-                        type="text"
+                      <LocationAutocomplete
                         id="edit-location"
                         value={location}
-                        onChange={(e) => setLocation(e.target.value)}
-                        required
+                        onChange={setLocation}
+                        placeholder="Search for event location..."
                         disabled={saving}
-                        placeholder="Event location"
+                        required
                       />
                     </div>
 

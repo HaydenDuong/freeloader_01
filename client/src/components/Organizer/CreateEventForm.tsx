@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
+import LocationAutocomplete from '../LocationAutocomplete';
 
 interface CreateEventFormProps {
   onEventCreated: (event: Event) => void;
@@ -106,14 +107,13 @@ const CreateEventForm: React.FC<CreateEventFormProps> = ({ onEventCreated, onCan
 
         <div className="form-group">
           <label htmlFor="location">Location *</label>
-          <input
-            type="text"
+          <LocationAutocomplete
             id="location"
             value={location}
-            onChange={(e) => setLocation(e.target.value)}
-            required
+            onChange={setLocation}
+            placeholder="Search for event location..."
             disabled={loading}
-            placeholder="Event location"
+            required
           />
         </div>
 

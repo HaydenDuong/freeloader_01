@@ -19,6 +19,30 @@ body {
   flex-direction: column;
 }
 
+/* Global top logo bar (shown on inner pages) */
+.app-logo-bar {
+  position: sticky;
+  top: 0;
+  z-index: 900;
+  background: #ffffff;
+  border-bottom: 1px solid #e0e0e0;
+  padding: 0.75rem 1.5rem;
+  display: flex;
+  align-items: center;
+}
+
+/* Shared logo style (matches landing page) */
+.logo {
+  font-size: 1.5rem;
+  font-weight: bold;
+  background: linear-gradient(45deg, #6a11cb, #2575fc);
+  -webkit-background-clip: text;
+  color: #6a11cb; /* fallback */
+  color: transparent;
+  background-clip: text;
+  text-decoration: none;
+}
+
 /* Global button styles */
 button {
   font-family: inherit;

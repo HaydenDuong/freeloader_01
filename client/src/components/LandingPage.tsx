@@ -6,7 +6,7 @@ const LandingPage = () => {
     <div className="landing-page">
       {/* Header */}
       <header className="landing-header">
-        <div className="logo">FreeLoader</div>
+        <a href="/" className="logo">FreeLoader</a>
         <nav>
           <a href="/help">Help Centre</a>
           <a href="/register">Sign Up</a>

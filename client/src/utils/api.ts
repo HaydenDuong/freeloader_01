@@ -95,6 +95,7 @@ export const eventsAPI = {
     location: string;
     dateTime: string;
     goodsProvided: string[];
+    tags: string[];
   }): Promise<{ message: string; event: Event }> =>
     api.post('/events', eventData).then(res => res.data),
   
@@ -104,6 +105,7 @@ export const eventsAPI = {
     location: string;
     dateTime: string;
     goodsProvided: string[];
+    tags: string[];
   }): Promise<{ message: string; event: Event }> =>
     api.put(`/events/${eventId}`, eventData).then(res => res.data),
   

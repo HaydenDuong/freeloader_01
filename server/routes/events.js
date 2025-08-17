@@ -7,20 +7,21 @@ const router = express.Router();
 // Create event (organizers only)
 router.post('/', authenticateToken, requireRole('organizer'), (req, res) => {
   try {
-    const { title, description, location, dateTime, goodsProvided } = req.body;
+    const { title, description, location, dateTime, goodsProvided, tags = [] } = req.body;
 
     // Validate input
     if (!title || !description || !location || !dateTime || !goodsProvided) {
       return res.status(400).json({ message: 'All fields are required' });
     }
 
-    // Convert goodsProvided array to JSON string for storage
+    // Convert arrays to JSON strings for storage
     const goodsProvidedJson = JSON.stringify(goodsProvided);
+    const tagsJson = JSON.stringify(tags);
 
     // Create event
     db.run(
-      'INSERT INTO events (title, description, location, date_time, goods_provided, organizer_id) VALUES (?, ?, ?, ?, ?, ?)',
-      [title, description, location, dateTime, goodsProvidedJson, req.user.id],
+      'INSERT INTO events (title, description, location, date_time, goods_provided, tags, organizer_id) VALUES (?, ?, ?, ?, ?, ?, ?)',
+      [title, description, location, dateTime, goodsProvidedJson, tagsJson, req.user.id],
       function(err) {
         if (err) {
           console.error('Database error:', err);
@@ -36,6 +37,7 @@ router.post('/', authenticateToken, requireRole('organizer'), (req, res) => {
             location,
             date_time: dateTime,
             goodsProvided,
+            tags,
             organizer_id: req.user.id,
             created_at: new Date().toISOString()
           }
@@ -63,10 +65,11 @@ router.get('/', authenticateToken, requireRole('student'), (req, res) => {
           return res.status(500).json({ message: 'Error fetching events' });
         }
 
-        // Parse goods_provided JSON for each event
+        // Parse goods_provided and tags JSON for each event
         const parsedEvents = events.map(event => ({
           ...event,
-          goodsProvided: JSON.parse(event.goods_provided)
+          goodsProvided: JSON.parse(event.goods_provided),
+          tags: JSON.parse(event.tags || '[]')
         }));
 
         res.json({ events: parsedEvents });
@@ -90,10 +93,11 @@ router.get('/my-events', authenticateToken, requireRole('organizer'), (req, res)
           return res.status(500).json({ message: 'Error fetching events' });
         }
 
-        // Parse goods_provided JSON for each event
+        // Parse goods_provided and tags JSON for each event
         const parsedEvents = events.map(event => ({
           ...event,
-          goodsProvided: JSON.parse(event.goods_provided)
+          goodsProvided: JSON.parse(event.goods_provided),
+          tags: JSON.parse(event.tags || '[]')
         }));
 
         res.json({ events: parsedEvents });
@@ -109,7 +113,7 @@ router.get('/my-events', authenticateToken, requireRole('organizer'), (req, res)
 router.put('/:id', authenticateToken, requireRole('organizer'), (req, res) => {
   try {
     const eventId = req.params.id;
-    const { title, description, location, dateTime, goodsProvided } = req.body;
+    const { title, description, location, dateTime, goodsProvided, tags = [] } = req.body;
 
     // Validate input
     if (!title || !description || !location || !dateTime || !goodsProvided) {
@@ -130,13 +134,14 @@ router.put('/:id', authenticateToken, requireRole('organizer'), (req, res) => {
           return res.status(404).json({ message: 'Event not found or you do not have permission to edit it' });
         }
 
-        // Convert goodsProvided array to JSON string for storage
+        // Convert arrays to JSON strings for storage
         const goodsProvidedJson = JSON.stringify(goodsProvided);
+        const tagsJson = JSON.stringify(tags);
 
         // Update the event
         db.run(
-          'UPDATE events SET title = ?, description = ?, location = ?, date_time = ?, goods_provided = ? WHERE id = ? AND organizer_id = ?',
-          [title, description, location, dateTime, goodsProvidedJson, eventId, req.user.id],
+          'UPDATE events SET title = ?, description = ?, location = ?, date_time = ?, goods_provided = ?, tags = ? WHERE id = ? AND organizer_id = ?',
+          [title, description, location, dateTime, goodsProvidedJson, tagsJson, eventId, req.user.id],
           function(err) {
             if (err) {
               console.error('Database error:', err);
@@ -156,6 +161,7 @@ router.put('/:id', authenticateToken, requireRole('organizer'), (req, res) => {
                 location,
                 date_time: dateTime,
                 goodsProvided,
+                tags,
                 organizer_id: req.user.id,
                 created_at: new Date().toISOString()
               }

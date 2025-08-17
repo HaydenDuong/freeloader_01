@@ -6,6 +6,7 @@ import { Event } from '../../types';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
 import EventEngagementMetrics from './EventEngagementMetrics';
 import LocationAutocomplete from '../LocationAutocomplete';
+import TagSelector from '../TagSelector';
 import './Organizer.css';
 
 const OrganizerEventEdit: React.FC = () => {
@@ -26,6 +27,7 @@ const OrganizerEventEdit: React.FC = () => {
   const [location, setLocation] = useState('');
   const [dateTime, setDateTime] = useState('');
   const [goodsProvided, setGoodsProvided] = useState<string[]>(['']);
+  const [tags, setTags] = useState<string[]>([]);
 
   useEffect(() => {
     fetchEvent();
@@ -70,6 +72,7 @@ const OrganizerEventEdit: React.FC = () => {
     setLocation(eventData.location || '');
     setDateTime(formatDateTimeForInput(eventData.date_time));
     setGoodsProvided(eventData.goodsProvided && eventData.goodsProvided.length > 0 ? [...eventData.goodsProvided] : ['']);
+    setTags(eventData.tags || []);
   };
 
   // Helper function to format date for datetime-local input
@@ -132,6 +135,7 @@ const OrganizerEventEdit: React.FC = () => {
         location,
         dateTime,
         goodsProvided: filteredGoods,
+        tags,
       });
 
       handleUpdateSuccess(response.event);
@@ -330,6 +334,21 @@ const OrganizerEventEdit: React.FC = () => {
                   </div>
 
                   <div className="event-detail-section">
+                    <h4>Tags</h4>
+                    {event?.tags && event.tags.length > 0 ? (
+                      <div className="tags-display">
+                        {event.tags.map((tag, index) => (
+                          <span key={index} className="tag-display">
+                            🏷️ {tag}
+                          </span>
+                        ))}
+                      </div>
+                    ) : (
+                      <p className="detail-value">No tags added</p>
+                    )}
+                  </div>
+
+                  <div className="event-detail-section">
                     <h4>Event Created</h4>
                     <p className="detail-value">🕒 {event && formatDate(event.created_at)}</p>
                   </div>
@@ -433,6 +452,19 @@ const OrganizerEventEdit: React.FC = () => {
                       >
                         Add Another Item
                       </button>
+                    </div>
+
+                    <div className="form-group">
+                      <label htmlFor="edit-tags">Tags (Optional)</label>
+                      <TagSelector
+                        selectedTags={tags}
+                        onChange={setTags}
+                        disabled={saving}
+                        placeholder="Add tags to help students discover your event..."
+                      />
+                      <small className="form-help-text">
+                        Tags help students find events that match their interests. Select relevant categories from Goods, Topics, Career, and Entertainment.
+                      </small>
                     </div>
 
                     <div className="form-actions">

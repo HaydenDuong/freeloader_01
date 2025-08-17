@@ -1,7 +1,7 @@
 
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
-import { eventsAPI } from '../../utils/api';
+import { eventsAPI, engagementAPI } from '../../utils/api';
 import { Event } from '../../types';
 import './Student.css';
 import StudentEventList from './StudentEventList';
@@ -45,17 +45,30 @@ const SavedEvents: React.FC = () => {
     }
   }, [allEvents]);
 
-  const handleRsvpToggle = (eventId: number) => {
+  const handleRsvpToggle = async (eventId: number) => {
+    const isCurrentlyRsvped = rsvpEvents.has(eventId);
     const newRsvpEvents = new Set(rsvpEvents);
-    if (newRsvpEvents.has(eventId)) {
-      newRsvpEvents.delete(eventId);
-    } else {
-      newRsvpEvents.add(eventId);
+    
+    try {
+      if (isCurrentlyRsvped) {
+        // Remove save
+        await engagementAPI.removeSave(eventId);
+        newRsvpEvents.delete(eventId);
+      } else {
+        // Add save
+        await engagementAPI.trackSave(eventId);
+        newRsvpEvents.add(eventId);
+      }
+      
+      setRsvpEvents(newRsvpEvents);
+      const newSavedEvents = allEvents.filter(event => newRsvpEvents.has(event.id));
+      setSavedEvents(newSavedEvents);
+      // Keep localStorage in sync for immediate UI feedback
+      localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
+    } catch (error) {
+      console.error('Failed to update RSVP:', error);
+      // Show user-friendly error or revert the change
     }
-    setRsvpEvents(newRsvpEvents);
-    const newSavedEvents = allEvents.filter(event => newRsvpEvents.has(event.id));
-    setSavedEvents(newSavedEvents);
-    localStorage.setItem('student_rsvps', JSON.stringify(Array.from(newRsvpEvents)));
   };
 
   return (

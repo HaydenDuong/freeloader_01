@@ -4,6 +4,7 @@ import { useAuth } from '../../context/AuthContext';
 import { eventsAPI } from '../../utils/api';
 import { Event } from '../../types';
 import DeleteConfirmationModal from './DeleteConfirmationModal';
+import EventEngagementMetrics from './EventEngagementMetrics';
 import './Organizer.css';
 
 const OrganizerEventEdit: React.FC = () => {
@@ -249,7 +250,9 @@ const OrganizerEventEdit: React.FC = () => {
             </button>
           </div>
 
-          <div className="edit-event-form">
+          <div className="edit-page-layout">
+            <div className="edit-form-column">
+              <div className="edit-event-form">
             <div className="edit-event-header">
               <h3>✏️ Edit Event</h3>
               <button 
@@ -358,6 +361,12 @@ const OrganizerEventEdit: React.FC = () => {
                 </button>
               </div>
             </form>
+              </div>
+            </div>
+
+            <div className="metrics-column">
+              {event && <EventEngagementMetrics eventId={event.id} />}
+            </div>
           </div>
         </div>
       </main>

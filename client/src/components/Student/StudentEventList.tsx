@@ -5,7 +5,7 @@ import { Event } from '../../types';
 interface StudentEventListProps {
   events: Event[];
   rsvpEvents: Set<number>;
-  onRsvpToggle: (eventId: number) => void;
+  onRsvpToggle: (eventId: number) => Promise<void>;
   isPast?: boolean;
 }
 
@@ -95,7 +95,7 @@ const StudentEventList: React.FC<StudentEventListProps> = ({
                 <div className="event-actions" onClick={e => e.stopPropagation()}>
                   <button
                     className={`rsvp-button ${isRsvped ? 'rsvped' : ''}`}
-                    onClick={() => onRsvpToggle(event.id)}
+                    onClick={async () => await onRsvpToggle(event.id)}
                   >
                     {isRsvped ? '✓ Going!' : '+ I\'m Interested'}
                   </button>

@@ -331,58 +331,12 @@ const StudentEventDetails: React.FC = () => {
                             <div style={{
                                 padding: '2rem'
                             }}>
-                                {/* Description */}
-                                <div style={{
-                                    fontSize: '1rem',
-                                    lineHeight: '1.6',
-                                    color: '#495057',
-                                    marginBottom: '2rem'
-                                }}>
-                                    <h2 style={{
-                                        fontSize: '1.1rem',
-                                        fontWeight: '600',
-                                        color: '#2c3e50',
-                                        marginBottom: '1rem'
-                                    }}>
-                                        {event.description}
-                                    </h2>
-                                </div>
-
-                                {/* What's Included */}
-                                {event.goodsProvided && event.goodsProvided.length > 0 && (
-                                    <div style={{ marginBottom: '2rem' }}>
-                                        <h3 style={{
-                                            fontSize: '1.1rem',
-                                            fontWeight: '600',
-                                            color: '#2c3e50',
-                                            marginBottom: '1rem'
-                                        }}>
-                                            What's Included
-                                        </h3>
-                                        <div style={{
-                                            display: 'grid',
-                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                            gap: '0.75rem'
-                                        }}>
-
-                                            {event.goodsProvided.map((good, index) => (
-                                                <div
-                                                    key={index}
-                                                    style={{
-                                                        background: '#f8f9fa',
-                                                        padding: '0.75rem 1rem',
-                                                        borderRadius: '6px',
-                                                        border: '1px solid #e9ecef',
-                                                        fontSize: '0.9rem',
-                                                        color: '#495057'
-                                                    }}
-                                                >
-                                                    &bull; {good}
-                                                </div>
-                                            ))}
-                                        </div>
-                                    </div>
-                                )}
+                                <h2 style={{
+                                    fontSize: '1.5rem',
+                                    fontWeight: '600',
+                                    color: '#2c3e50',
+                                    marginBottom: '1.5rem'
+                                }}>Details</h2>
 
                                 {/* Organizer Section */}
                                 <div style={{
@@ -406,6 +360,71 @@ const StudentEventDetails: React.FC = () => {
                                         {event.organizer_email}
                                     </div>
                                 </div>
+
+                                {/* Description */}
+                                <div style={{
+                                    background: '#f8f9fa',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '2rem'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        color: '#2c3e50',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        Description
+                                    </h3>
+                                    <div style={{
+                                        fontSize: '0.95rem',
+                                        color: '#495057'
+                                    }}>
+                                        {event.description}
+                                    </div>
+                                </div>
+
+
+
+                                {/* Free Stuff section */}
+                                {event.goodsProvided && event.goodsProvided.length > 0 && (
+                                    <div style={{
+                                        background: '#f8f9fa',
+                                        padding: '1.5rem',
+                                        borderRadius: '8px',
+                                        marginBottom: '2rem'
+                                    }}>
+                                        <h3 style={{
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            color: '#2c3e50',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            Free Stuff
+                                        </h3>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                            gap: '0.75rem'
+                                        }}>
+                                            {event.goodsProvided.map((good, index) => (
+                                                <div
+                                                    key={index}
+                                                    style={{
+                                                        background: 'white',
+                                                        padding: '0.75rem 1rem',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid #e9ecef',
+                                                        fontSize: '0.9rem',
+                                                        color: '#495057'
+                                                    }}
+                                                >
+                                                    &bull; {good}
+                                                </div>
+                                            ))}
+                                        </div>
+                                    </div>
+                                )}
 
                                 {/* Location Section */}
                                 <div style={{
@@ -441,7 +460,7 @@ const StudentEventDetails: React.FC = () => {
                                     </div>
                                 </div>
 
-                                <div style={{
+                                {/* <div style={{
                                     fontSize: '0.85rem',
                                     color: '#6c757d',
                                     fontStyle: 'italic',
@@ -449,7 +468,7 @@ const StudentEventDetails: React.FC = () => {
                                     paddingTop: '1rem'
                                 }}>
                                     All events are free and open to students. Please bring your student ID for verification.
-                                </div>
+                                </div> */}
                             </div>
                         </div>
                     </div>

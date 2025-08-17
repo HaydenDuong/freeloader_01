@@ -3,6 +3,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { Event } from '../../types';
 import { eventsAPI } from '../../utils/api';
+import LeafletMap from '../LeafletMap';
 import './Student.css';
 
 const StudentEventDetails: React.FC = () => {
@@ -328,117 +329,126 @@ const StudentEventDetails: React.FC = () => {
 
                             {/* Event Details */}
                             <div style={{
-                                padding: '2rem',
-                                display: 'grid',
-                                gridTemplateColumns: '2fr 1fr',
-                                gap: '3rem'
+                                padding: '2rem'
                             }}>
-                                {/* Left Column - Description */}
-                                <div>
-                                    <div style={{
-                                        fontSize: '1rem',
-                                        lineHeight: '1.6',
-                                        color: '#495057',
-                                        marginBottom: '2rem'
+                                {/* Description */}
+                                <div style={{
+                                    fontSize: '1rem',
+                                    lineHeight: '1.6',
+                                    color: '#495057',
+                                    marginBottom: '2rem'
+                                }}>
+                                    <h2 style={{
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        color: '#2c3e50',
+                                        marginBottom: '1rem'
                                     }}>
                                         {event.description}
-                                    </div>
+                                    </h2>
+                                </div>
 
-                                    {/* What's Included */}
-                                    {event.goodsProvided && event.goodsProvided.length > 0 && (
-                                        <div style={{ marginBottom: '2rem' }}>
-                                            <h3 style={{
-                                                fontSize: '1.1rem',
-                                                fontWeight: '600',
-                                                color: '#2c3e50',
-                                                marginBottom: '1rem'
-                                            }}>
-                                                What's Included
-                                            </h3>
-                                            <div style={{
-                                                display: 'grid',
-                                                gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
-                                                gap: '0.75rem'
-                                            }}>
-                                                {event.goodsProvided.map((good, index) => (
-                                                    <div
-                                                        key={index}
-                                                        style={{
-                                                            background: '#f8f9fa',
-                                                            padding: '0.75rem 1rem',
-                                                            borderRadius: '6px',
-                                                            border: '1px solid #e9ecef',
-                                                            fontSize: '0.9rem',
-                                                            color: '#495057'
-                                                        }}
-                                                    >
-                                                        &bull; {good}
-                                                    </div>
-                                                ))}
-                                            </div>
+                                {/* What's Included */}
+                                {event.goodsProvided && event.goodsProvided.length > 0 && (
+                                    <div style={{ marginBottom: '2rem' }}>
+                                        <h3 style={{
+                                            fontSize: '1.1rem',
+                                            fontWeight: '600',
+                                            color: '#2c3e50',
+                                            marginBottom: '1rem'
+                                        }}>
+                                            What's Included
+                                        </h3>
+                                        <div style={{
+                                            display: 'grid',
+                                            gridTemplateColumns: 'repeat(auto-fit, minmax(200px, 1fr))',
+                                            gap: '0.75rem'
+                                        }}>
+
+                                            {event.goodsProvided.map((good, index) => (
+                                                <div
+                                                    key={index}
+                                                    style={{
+                                                        background: '#f8f9fa',
+                                                        padding: '0.75rem 1rem',
+                                                        borderRadius: '6px',
+                                                        border: '1px solid #e9ecef',
+                                                        fontSize: '0.9rem',
+                                                        color: '#495057'
+                                                    }}
+                                                >
+                                                    &bull; {good}
+                                                </div>
+                                            ))}
                                         </div>
-                                    )}
+                                    </div>
+                                )}
 
-                                    <div style={{
-                                        fontSize: '0.85rem',
-                                        color: '#6c757d',
-                                        fontStyle: 'italic',
-                                        borderTop: '1px solid #e9ecef',
-                                        paddingTop: '1rem'
+                                {/* Organizer Section */}
+                                <div style={{
+                                    background: '#f8f9fa',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '2rem'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        color: '#2c3e50',
+                                        marginBottom: '1rem'
                                     }}>
-                                        All events are free and open to students. Please bring your student ID for verification.
+                                        Organizer
+                                    </h3>
+                                    <div style={{
+                                        fontSize: '0.95rem',
+                                        color: '#495057'
+                                    }}>
+                                        {event.organizer_email}
                                     </div>
                                 </div>
 
-                                {/* Right Column - Location & Details */}
-                                <div>
-                                    <div style={{
-                                        background: '#f8f9fa',
-                                        padding: '1.5rem',
-                                        borderRadius: '8px',
-                                        marginBottom: '1.5rem'
+                                {/* Location Section */}
+                                <div style={{
+                                    background: '#f8f9fa',
+                                    padding: '1.5rem',
+                                    borderRadius: '8px',
+                                    marginBottom: '2rem'
+                                }}>
+                                    <h3 style={{
+                                        fontSize: '1.1rem',
+                                        fontWeight: '600',
+                                        color: '#2c3e50',
+                                        marginBottom: '1rem'
                                     }}>
-                                        <h3 style={{
-                                            fontSize: '1rem',
-                                            fontWeight: '600',
-                                            color: '#2c3e50',
-                                            marginBottom: '1rem',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.5px'
-                                        }}>
-                                            Location
-                                        </h3>
-                                        <div style={{
-                                            fontSize: '0.95rem',
-                                            color: '#495057',
-                                            lineHeight: '1.5'
-                                        }}>
-                                            {event.location}
-                                        </div>
+                                        Location
+                                    </h3>
+                                    <div style={{
+                                        fontSize: '0.95rem',
+                                        color: '#495057',
+                                        lineHeight: '1.5',
+                                        marginBottom: '1rem'
+                                    }}>
+                                        {event.location}
                                     </div>
 
-                                    <div style={{
-                                        background: '#f8f9fa',
-                                        padding: '1.5rem',
-                                        borderRadius: '8px'
-                                    }}>
-                                        <h3 style={{
-                                            fontSize: '1rem',
-                                            fontWeight: '600',
-                                            color: '#2c3e50',
-                                            marginBottom: '1rem',
-                                            textTransform: 'uppercase',
-                                            letterSpacing: '0.5px'
-                                        }}>
-                                            Organizer
-                                        </h3>
-                                        <div style={{
-                                            fontSize: '0.95rem',
-                                            color: '#495057'
-                                        }}>
-                                            {event.organizer_email}
-                                        </div>
+                                    {/* Leaflet Map */}
+                                    <div style={{ marginTop: '1rem' }}>
+                                        <LeafletMap
+                                            address={event.location}
+                                            height="300px"
+                                            width="100%"
+                                        />
                                     </div>
+                                </div>
+
+                                <div style={{
+                                    fontSize: '0.85rem',
+                                    color: '#6c757d',
+                                    fontStyle: 'italic',
+                                    borderTop: '1px solid #e9ecef',
+                                    paddingTop: '1rem'
+                                }}>
+                                    All events are free and open to students. Please bring your student ID for verification.
                                 </div>
                             </div>
                         </div>

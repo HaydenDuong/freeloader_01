@@ -11,8 +11,8 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
   const [currentDate, setCurrentDate] = useState(new Date());
   const [selectedEvent, setSelectedEvent] = useState<Event | null>(null);
 
-  // Filter events to show only RSVP'd events
-  const rsvpedEvents = events.filter(event => rsvpEvents.has(event.id));
+  // Show all events instead of filtering by RSVP
+  const allEvents = events;
 
   // Get first day of the month and total days
   const firstDayOfMonth = new Date(currentDate.getFullYear(), currentDate.getMonth(), 1);
@@ -33,10 +33,10 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
     setCurrentDate(new Date());
   };
 
-  // Get events for a specific date (only RSVP'd events)
+  // Get events for a specific date (all events)
   const getEventsForDate = (date: number) => {
     const targetDate = new Date(currentDate.getFullYear(), currentDate.getMonth(), date);
-    return rsvpedEvents.filter(event => {
+    return allEvents.filter(event => {
       const eventDate = new Date(event.date_time);
       return (
         eventDate.getDate() === targetDate.getDate() &&
@@ -60,7 +60,7 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
   // Generate calendar days
   const generateCalendarDays = () => {
     const days = [];
-    
+
     // Empty cells for days before the first day of the month
     for (let i = 0; i < firstDayWeekday; i++) {
       days.push(<div key={`empty-${i}`} className="calendar-day empty"></div>);
@@ -74,8 +74,8 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
       const eventsClass = hasEvents ? 'has-events' : '';
 
       days.push(
-        <div 
-          key={date} 
+        <div
+          key={date}
           className={`calendar-day ${todayClass} ${eventsClass}`}
           onClick={() => {
             if (hasEvents && dayEvents[0]) {
@@ -88,9 +88,9 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
           {hasEvents && (
             <div className="event-indicators">
               {dayEvents.slice(0, 3).map((event, index) => (
-                <div 
-                  key={event.id} 
-                  className="event-dot"
+                <div
+                  key={event.id}
+                  className={`event-dot ${rsvpEvents.has(event.id) ? 'rsvp-event' : 'regular-event'}`}
                   title={event.title}
                   style={{ animationDelay: `${index * 0.1}s` }}
                 />
@@ -118,11 +118,11 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
     <div className="event-calendar">
       {/* Calendar Title */}
       <div className="calendar-title">
-        <h3>📅 My Event Calendar</h3>
+        <h3>📅 Event Calendar</h3>
         <p className="calendar-subtitle">
-          {rsvpedEvents.length === 0 
-            ? "Mark events as 'I'm Interested' to see them here!" 
-            : `Showing ${rsvpedEvents.length} event${rsvpedEvents.length === 1 ? '' : 's'} you're interested in`
+          {allEvents.length === 0
+            ? "No events available at the moment"
+            : `Showing ${allEvents.length} upcoming event${allEvents.length === 1 ? '' : 's'}`
           }
         </p>
       </div>
@@ -165,8 +165,11 @@ const EventCalendar: React.FC<EventCalendarProps> = ({ events, rsvpEvents, onEve
           <div className="event-popup-content">
             <div className="event-popup-header">
               <h4>{selectedEvent.title}</h4>
-              <button 
-                className="close-popup" 
+              {rsvpEvents.has(selectedEvent.id) && (
+                <span className="interest-badge">✓ I'm Interested</span>
+              )}
+              <button
+                className="close-popup"
                 onClick={() => setSelectedEvent(null)}
                 title="Close"
               >

@@ -1,13 +1,18 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Event } from '../../types';
 
 interface EventListProps {
   events: Event[];
-  onEditEvent: (event: Event) => void;
-  onDeleteEvent: (event: Event) => void;
 }
 
-const EventList: React.FC<EventListProps> = ({ events, onEditEvent, onDeleteEvent }) => {
+const EventList: React.FC<EventListProps> = ({ events }) => {
+  const navigate = useNavigate();
+
+  const handleEventClick = (event: Event) => {
+    navigate(`/organizer/event/${event.id}`);
+  };
+
   const formatDate = (dateString: string) => {
     const date = new Date(dateString);
     return date.toLocaleString('en-US', {
@@ -23,7 +28,11 @@ const EventList: React.FC<EventListProps> = ({ events, onEditEvent, onDeleteEven
   return (
     <div className="event-list">
       {events.map((event) => (
-        <div key={event.id} className="event-card">
+        <div 
+          key={event.id} 
+          className="event-card clickable-card"
+          onClick={() => handleEventClick(event)}
+        >
           <div className="event-header">
             <h3 className="event-title">{event.title}</h3>
             <span className="event-date">{formatDate(event.date_time)}</span>
@@ -54,21 +63,8 @@ const EventList: React.FC<EventListProps> = ({ events, onEditEvent, onDeleteEven
             <div className="event-meta-info">
               <small>Created on {formatDate(event.created_at)}</small>
             </div>
-            <div className="event-actions">
-              <button 
-                className="edit-button"
-                onClick={() => onEditEvent(event)}
-                title="Edit Event"
-              >
-                ✏️ Edit
-              </button>
-              <button 
-                className="delete-button"
-                onClick={() => onDeleteEvent(event)}
-                title="Delete Event"
-              >
-                🗑️ Delete
-              </button>
+            <div className="event-click-hint">
+              <span className="click-hint">Click to edit →</span>
             </div>
           </div>
         </div>
